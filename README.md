@@ -28,10 +28,10 @@ Links de referência deste projeto:
     - https://github.com/smedina1304/edc-igti-kubernetes-mod4
         <br>
         *Forked from:* [neylsoncrepalde/edc_mod4_exercise_igti](https://github.com/neylsoncrepalde/edc_mod4_exercise_igti)<br>
-        https://img.shields.io/github/forks/neylsoncrepalde/edc_mod4_exercise_igti?style=social
+        ![GitHub forks](https://img.shields.io/github/forks/neylsoncrepalde/edc_mod4_exercise_igti?style=social)
         <br>
 - "edc-etl-dags-prefect-io"
     - https://github.com/smedina1304/edc-etl-dags-prefect-io
         <br>
-        https://img.shields.io/github/stars/smedina1304/edc-etl-dags-prefect-io?style=social
+        ![GitHub stars](https://img.shields.io/github/stars/smedina1304/edc-etl-dags-prefect-io?style=social)
 <br>
