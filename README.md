@@ -326,4 +326,48 @@ A utilização de ferramentas via CLI (*"command line"*) é importante pois pode
             <img src="docs/images/cluster-k8s-gke-config-13.png" width="600" style="max-width: 600px;">
         </p>
         <br>
+        <br>
+
+    - Após a confirmação de termino e criação do cluster k8s, verifique o registro do contexto de acesso e realize uma verificação nos nodes do cluster.
+    <br>
+    
+    Verificando o contexto de acesso.
+    <br>
+
+    ```shell
+        > kubectx
+        gke_edc-igti-smedina_us-east1-c_cluster-smedina-k8s
+    ```
+
+    <br>
+    Listando nos Nodes dos Cluster.
+    <br>
+
+    ```shell
+        > kubectl get nodes
+        NAME                                                 STATUS   ROLES    AGE    VERSION
+        gke-cluster-smedina-k8s-default-pool-0bde709b-0vq6   Ready    <none>   5m8s   v1.20.9-gke.1001
+        gke-cluster-smedina-k8s-default-pool-0bde709b-2fb6   Ready    <none>   5m8s   v1.20.9-gke.1001
+        gke-cluster-smedina-k8s-default-pool-0bde709b-dzt2   Ready    <none>   5m9s   v1.20.9-gke.1001
+        gke-cluster-smedina-k8s-default-pool-0bde709b-ksgh   Ready    <none>   5m9s   v1.20.9-gke.1001
+        gke-cluster-smedina-k8s-default-pool-0bde709b-vfvh   Ready    <none>   5m8s   v1.20.9-gke.1001
+        gke-cluster-smedina-k8s-default-pool-0bde709b-vtvk   Ready    <none>   5m9s   v1.20.9-gke.1001
+    ```
+
+    <br>
+    
+    :point_right: *Atenção: se necessário para deletar o cluster o comando abaixo pode ser utilizado.*
+    <br>
+
+    ```shell
+        > gcloud container clusters delete "cluster-smedina-k8s"
+        gcloud container clusters delete "cluster-smedina-k8s"
+        The following clusters will be deleted.
+        - [cluster-smedina-k8s] in [us-east1-c]
+
+        Do you want to continue (Y/n)?  Y
+
+        Deleting cluster cluster-smedina-k8s...done. 
+    ```
+    :point_right: *Importante: Confirme a DELEÇÃO com [Enter] ou [Y].*
 
