@@ -1,4 +1,4 @@
-# edc-airflow-spark-on-k8s-gke
+# edc-airflow-spark-on-k8s
 Engenharia de Dados em Cloud - ETL - Airflow e Spark Operator no Kubernetes - Google Kubernetes Engine
 ## Objetivo:
 Este projeto tem como objetivo documentar de forma didática as etapas necessárias para criar de um Cluster Kubernetes ("**k8s**") e realizar o *deploy* do *Airflow* e *Spark-Operator* neste mesmo cluster. Disponibilizando assim uma ambiente escalavel para processamento de dados e orquestração de pipelines, sendo plenamente aplicavél em um contexto de *Big Data*. 
@@ -39,7 +39,7 @@ Links de referência deste projeto:
 
 
 
-## Preparação do ambiente Python de desenvolvimento:
+## Preparação do ambiente Python:
 
 - Versão da Linguagem Python 3.8 ou superior deve estar instalada.
     <br>
@@ -141,25 +141,183 @@ Links de referência deste projeto:
     <br>
     <br>
 
+## Requisitos de ferramentas CLI (Command line):
+<br>
+
+A utilização de ferramentas via CLI (*"command line"*) é importante pois podemos definir os scripts de criação, preparação de deploy em nosso ambiente k8s, deixando o mesmo facilmente de ser replicavel em outra estrutura se necessário, e até mesmo em um caso de um acelerador para um "disaster recovery".
+<br>
+
+- Recursos indicados:
+    <br>
+
+    - Ambiente AWS, seguir as instruções da página conforme o sistema operaiconal desejado:
+        - AWS CLI version 2 - https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html 
+        <br>
+
+    - Ambiente GCP, seguir as instruções da página conforme o sistema operaiconal desejado:
+        - Google Cloud SDK Command Line (CLI) - https://cloud.google.com/sdk/docs/quickstart
+        <br>
+        :point_right: *Importante: realize todos os passos de preparação do ambiente Google Cloud SDK conforme a página Quickstart.*
+        <br>     
+
+   - EKS para interação com o cluster Kubernetes - eksctl - https://docs.aws.amazon.com/eks/latest/userguide/eksctl.html
+      - Também deve ser verificado de juntamente com o eksctl foi instalando kubectl, caso contrário verificar o procedimento em: https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html
+      <br>
+
+   - HELM - repositório de pacotes para deploy no k8s - https://helm.sh/docs/intro/install/
+    <br>
+
+   - kubectx - para alterar o contexto o cluster k8s, em caso de haver mais de uma referência na máquina utilizada para operação - https://github.com/ahmetb/kubectx
+    <br>
+
+- Verificar as instalações:
+   ``` shell
+    > aws --version
+    aws-cli/2.2.31 Python/3.8.8 Darwin/19.6.0 exe/x86_64 prompt/off
+
+    > gcloud --version
+    Google Cloud SDK 358.0.0
+    bq 2.0.71
+    core 2021.09.17
+    gsutil 4.68
+
+    > eksctl version
+    0.63.0
+
+    > kubectl version
+    Client Version: version.Info{Major:"1", Minor:"22", GitVersion:"v1.22.1", GitCommit:"632ed300f2c34f6d6d15ca4cef3d3c7073412212", GitTreeState:"clean", BuildDate:"2021-08-19T15:38:26Z", GoVersion:"go1.16.6", Compiler:"gc", Platform:"darwin/amd64"}
+
+    > helm version
+    version.BuildInfo{Version:"v3.6.3", GitCommit:"d506314abfb5d21419df8c7e7e68012379db2354", GitTreeState:"dirty", GoVersion:"go1.16.6"}
+
+   ```
+
+<br>
+
+:point_right: *Importante: verifique todos os passos de configuração das ferramentas CLI referentes a interação com a AWS e GCP, pois cada uma tem seu padrão de autenticação.*
+<br>
+<br>
+
+
 ## Criação do Cluster Kubernetes (k8s) em Cloud:
 
-- Google Cloud.
+- Google Cloud - GCP.
 
-    - Instalar o Google Cloud SDK Command Line (CLI), seguir as instruções da página conforme o sistema operaiconal desejado:
-        <br>
-        https://cloud.google.com/sdk/docs/quickstart
-        <br>
-        :point_right: *Importante: realize todos os passos de preparação do ambiente Google Cloud SDK conforme a pagina Quickstart.*
-        <br> 
-
-    - Após instalação verificar a versão do `gcloud`, conforme instruções e o instalador que foi baixado:
+    - Após instalação do `gcloud`, conforme instruções e o instalador que foi baixado verifique as informações de configuração antes de iniciar a criação do cluster:
         <br>
         ```shell
-        > gcloud --version
-        Google Cloud SDK 358.0.0
-        bq 2.0.71
-        core 2021.09.17
-        gsutil 4.68
+        > gcloud config list             
+        [compute]
+        region = us-east1
+        zone = us-east1-c
+        [core]
+        account = sergio.medina
+        disable_usage_reporting = True
+        project = edc-igti-smedina
         ```
 
-    
+    - Verificando as configurações, o comando para criação do Cluster pode ser executado, como exemplo abaixo:
+    <br>
+    ```shell
+    > gcloud /
+    beta container --project "edc-igti-smedina" /
+    clusters create "cluster-smedina-k8s" --zone "us-east1-c" /
+    --no-enable-basic-auth --cluster-version "1.20.9-gke.1001" /
+    --release-channel "regular" --machine-type "e2-standard-2" /
+    --image-type "COS_CONTAINERD" --disk-type "pd-standard" /
+    --disk-size "100" --node-labels ies=igti,curso=edc /
+    --metadata disable-legacy-endpoints=true /
+    --scopes "https://www.googleapis.com/auth/compute",/
+    "https://www.googleapis.com/auth/devstorage.full_control",/
+    "https://www.googleapis.com/auth/taskqueue",/
+    "https://www.googleapis.com/auth/bigquery",/
+    "https://www.googleapis.com/auth/logging.write",/
+    "https://www.googleapis.com/auth/monitoring",/
+    "https://www.googleapis.com/auth/servicecontrol",/
+    "https://www.googleapis.com/auth/service.management.readonly",/
+    "https://www.googleapis.com/auth/trace.append" /
+    --max-pods-per-node "110" --num-nodes "6" /
+    --logging=SYSTEM,WORKLOAD --monitoring=SYSTEM /
+    --enable-ip-alias --network "projects/edc-igti-smedina/global/networks/default" /
+    --subnetwork "projects/edc-igti-smedina/regions/us-east1/subnetworks/default" /
+    --no-enable-intra-node-visibility --default-max-pods-per-node "110" /
+    --enable-autoscaling --min-nodes "4" --max-nodes "6" /
+    --no-enable-master-authorized-networks /
+    --addons HorizontalPodAutoscaling,HttpLoadBalancing,GcePersistentDiskCsiDriver /
+    --enable-autoupgrade --enable-autorepair /
+    --max-surge-upgrade 1 /
+    --max-unavailable-upgrade 0 /
+    --enable-shielded-nodes /
+    --node-locations "us-east1-c"
+    ```
+
+    *Script: `step-1-cluster/cluster_create.sh`*
+    <br>
+
+    Abaixo as telas do Console do GPC com as mesmas configurações do comando acima:
+    <br>
+    <p align="left">
+        <img src="docs/images/cluster-k8s-gke-config-01.png" width="600" style="max-width: 600px;">
+    </p>
+    <br>
+
+    <p align="left">
+        <img src="docs/images/cluster-k8s-gke-config-02.png" width="600" style="max-width: 600px;">
+    </p>
+    <br>
+
+    <p align="left">
+        <img src="docs/images/cluster-k8s-gke-config-03.png" width="600" style="max-width: 600px;">
+    </p>
+    <br>
+
+    <p align="left">
+        <img src="docs/images/cluster-k8s-gke-config-04.png" width="600" style="max-width: 600px;">
+    </p>
+    <br>
+
+    <p align="left">
+        <img src="docs/images/cluster-k8s-gke-config-05.png" width="600" style="max-width: 600px;">
+    </p>
+    <br>
+
+    <p align="left">
+        <img src="docs/images/cluster-k8s-gke-config-06.png" width="600" style="max-width: 600px;">
+    </p>
+    <br>
+
+    <p align="left">
+        <img src="docs/images/cluster-k8s-gke-config-07.png" width="600" style="max-width: 600px;">
+    </p>
+    <br>
+
+    <p align="left">
+        <img src="docs/images/cluster-k8s-gke-config-08.png" width="600" style="max-width: 600px;">
+    </p>
+    <br>
+
+    <p align="left">
+        <img src="docs/images/cluster-k8s-gke-config-09.png" width="600" style="max-width: 600px;">
+    </p>
+    <br>
+
+    <p align="left">
+        <img src="docs/images/cluster-k8s-gke-config-10.png" width="600" style="max-width: 600px;">
+    </p>
+    <br>
+
+    <p align="left">
+        <img src="docs/images/cluster-k8s-gke-config-11.png" width="600" style="max-width: 600px;">
+    </p>
+    <br>
+
+    <p align="left">
+        <img src="docs/images/cluster-k8s-gke-config-12.png" width="600" style="max-width: 600px;">
+    </p>
+    <br>
+
+    <p align="left">
+        <img src="docs/images/cluster-k8s-gke-config-13.png" width="600" style="max-width: 600px;">
+    </p>
+    <br>
+
