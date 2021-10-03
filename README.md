@@ -219,6 +219,7 @@ A utilização de ferramentas via CLI (*"command line"*) é importante pois pode
 
     - Verificando as configurações, o comando para criação do Cluster pode ser executado, como exemplo abaixo:
     <br>
+    
     ```shell
 
     > gcloud /
