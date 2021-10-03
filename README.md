@@ -205,7 +205,9 @@ A utilização de ferramentas via CLI (*"command line"*) é importante pois pode
 
     - Após instalação do `gcloud`, conforme instruções e o instalador que foi baixado verifique as informações de configuração antes de iniciar a criação do cluster:
         <br>
+
         ```shell
+
         > gcloud config list             
         [compute]
         region = us-east1
@@ -214,6 +216,7 @@ A utilização de ferramentas via CLI (*"command line"*) é importante pois pode
         account = sergio.medina
         disable_usage_reporting = True
         project = edc-igti-smedina
+        
         ```
 
     - Verificando as configurações, o comando para criação do Cluster pode ser executado, como exemplo abaixo:
