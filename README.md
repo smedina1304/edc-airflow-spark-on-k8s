@@ -256,6 +256,8 @@ A utilização de ferramentas via CLI (*"command line"*) é importante pois pode
     ```
     *Script: `step-1-cluster/cluster_create.sh`*
     <br>
+    *Sintaxe: `https://cloud.google.com/sdk/gcloud/reference/beta/container/clusters/create`*
+    <br>
 
     Abaixo as telas do Console do GPC com as mesmas configurações do comando acima:
     <br>
