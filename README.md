@@ -356,7 +356,10 @@ A utilização de ferramentas via CLI (*"command line"*) é importante pois pode
 
     <br>
     
-    :point_right: *Atenção: se necessário para deletar o cluster o comando abaixo pode ser utilizado.*
+    :point_right: *Atenção: se for necessário deletar o cluster utilize comando abaixo, ou busque uma referência na sintaxe para atender a necessidade.*
+    <br>
+
+    *Sintaxe: `https://cloud.google.com/sdk/gcloud/reference/container/clusters/delete`
     <br>
 
     ```shell
