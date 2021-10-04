@@ -548,3 +548,12 @@ Verifique as instruções e siga as etapas de instalação:
     <br>
     Foi adicionado uma código de exemplo para testes de funcionamento do `airflow` com o nome `example_taskflow_api_etl.py`
     <br>
+
+5. Delpoy do Airflow no Cluster k8s.
+
+    Após as preparações anteriores finalizadas executar o seguinte comando:
+
+    ```shell
+        > helm install airflow apache-airflow/airflow -f step-2-airflow/my-airflow-values.yaml -n airflow --debug
+    ```
+    
