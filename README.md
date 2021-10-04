@@ -73,7 +73,7 @@ Links de referência deste projeto:
 
     - Linux e Mac:
     ```shell
-    > source .venv/bin/activate
+    > source ./venv/bin/activate
     ```    
     <br>
 
@@ -133,6 +133,27 @@ Links de referência deste projeto:
 
     :point_right: *Obervação: todos os pacotes necessário para executar os pipelines (DAGs) deste projeto estão contidas  no arquivo em `requirements.txt`.*
     <br>
+
+    :point_right: *Atenção: Para ambientes MacOS e para algumas distribuições Linux, mediante a plataforma de Hardware como processador Intel 64bits, pode ser necessário a definição da variavel de ambiente `ARCHFLAGS="-arch x86_64"`. Caso durante a instalação de Pacotes no Python e retornando algum erro, verifique a necessidade de declarar a variavel de ambiente para definição da arquitetura do processador.*
+
+    Definir a variável de ambiente para Mac ou Linux:
+
+    ```shell
+        > export ARCHFLAGS="-arch x86_64"
+    ```
+
+    Para fazer a instalação do airflow de forma isolada execute o comando:
+
+    ```shell
+        > pip install apache-airflow
+    ```
+
+    ou pela documentação do pip (https://pypi.org/project/apache-airflow/).
+
+    ```shell
+        > pip install apache-airflow==2.1.4 \
+        --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.1.4/constraints-3.7.txt"
+    ```
     <br>
 
 ## Requisitos de ferramentas CLI (Command line):
@@ -441,4 +462,89 @@ Verifique as instruções e siga as etapas de instalação:
     - `step-2-airflow` - pasta do projeto para armazenar as instruções ou configurações de deploy para k8s via helm.
     - `my-airflow-values.yaml` - nome do arquivo que irá armazenar as alterações das configurações originais.
 
-   
+    <br>
+
+    Alterações realizadas no arquivo `my-airflow-values.yaml`:
+
+    a. Executor:
+
+    ```yaml
+        # Airflow executor
+        # Options: LocalExecutor, CeleryExecutor, KubernetesExecutor, CeleryKubernetesExecutor
+        # executor: "CeleryExecutor"
+        executor: "KubernetesExecutor"
+    ```
+
+    b. Environment variables:
+
+    ```yaml
+        # Environment variables for all airflow containers
+        env: []
+        - name: AIRFLOW__CORE__REMOTE_LOGGING
+            value: 'True'
+        - name: AIRFLOW__CORE__REMOTE_BASE_LOG_FOLDER
+            value: 'gs://dl-techinical-apps/airflow-logs/'
+        - name: AIRFLOW__CORE__REMOTE_LOG_CONN_ID
+            value: 'my_gcp'
+    ```
+
+    c. Create initial user:
+
+    ```yaml
+        # Create initial user.
+        defaultUser:
+            enabled: true
+            role: Admin
+            username: smedina
+            email: smedina1304@gmail.com
+            firstName: Sergio
+            lastName: Medina
+            password: admin
+    ```
+
+    d. Service type.
+
+    ```yaml
+        service:
+            #type: ClusterIP
+            type: loadBalancer
+    ```
+
+    e. Redis disable.
+
+    ```yaml
+        # Configuration for the redis provisioned by the chart
+        redis:
+            enabled: false
+    ```
+
+    f. DAGs\Gitsync enable
+
+    ```yaml
+        gitSync:
+            enabled: false
+
+            # git repo clone url
+            # ssh examples ssh://git@github.com/apache/airflow.git
+            # git@github.com:apache/airflow.git
+            # https example: https://github.com/apache/airflow.git
+            repo: https://github.com/smedina1304/edc-airflow-spark-on-k8s.git
+            branch: main
+            rev: HEAD
+            depth: 1
+            # the number of consecutive failures allowed before aborting
+            maxFailures: 0
+            # subpath within the repo where dags are located
+            # should be "" if dags are at repo root
+            subPath: "dags"
+    ```
+
+
+
+
+4. Airflow DAGs, criando uma pasta para armazenar as dags e um exemplo para teste de funcionalidade do airflow.
+    <br>
+    Na pasta raiz do projeto foi criada uma pasta com o Nome `dags`.
+    <br>
+    Foi adicionado uma código de exemplo para testes de funcionamento do `airflow` com o nome `example_taskflow_api_etl.py`
+    <br>

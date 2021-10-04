@@ -198,7 +198,8 @@ rbac:
 
 # Airflow executor
 # Options: LocalExecutor, CeleryExecutor, KubernetesExecutor, CeleryKubernetesExecutor
-executor: "CeleryExecutor"
+# executor: "CeleryExecutor"
+executor: "KubernetesExecutor"
 
 # If this is true and using LocalExecutor/KubernetesExecutor/CeleryKubernetesExecutor, the scheduler's
 # service account will have access to communicate with the api-server and launch pods.
@@ -208,8 +209,12 @@ allowPodLaunching: true
 
 # Environment variables for all airflow containers
 env: []
-# - name: ""
-#   value: ""
+  - name: AIRFLOW__CORE__REMOTE_LOGGING
+    value: 'True'
+  - name: AIRFLOW__CORE__REMOTE_BASE_LOG_FOLDER
+    value: 'gs://dl-techinical-apps/airflow-logs/'
+  - name: AIRFLOW__CORE__REMOTE_LOG_CONN_ID
+    value: 'my_gcp'
 
 # Secrets for all airflow containers
 secret: []
@@ -699,10 +704,10 @@ webserver:
   defaultUser:
     enabled: true
     role: Admin
-    username: admin
-    email: admin@example.com
-    firstName: admin
-    lastName: user
+    username: smedina
+    email: smedina1304@gmail.com
+    firstName: Sergio
+    lastName: Medina
     password: admin
 
   # Launch additional containers into webserver.
@@ -727,7 +732,8 @@ webserver:
   #   CSRF_ENABLED = True
 
   service:
-    type: ClusterIP
+    #type: ClusterIP
+    type: loadBalancer
     ## service annotations
     annotations: {}
     ports:
@@ -1059,7 +1065,7 @@ pgbouncer:
 
 # Configuration for the redis provisioned by the chart
 redis:
-  enabled: true
+  enabled: false
   terminationGracePeriodSeconds: 600
 
   # Create ServiceAccount
@@ -1302,15 +1308,15 @@ dags:
     # ssh examples ssh://git@github.com/apache/airflow.git
     # git@github.com:apache/airflow.git
     # https example: https://github.com/apache/airflow.git
-    repo: https://github.com/apache/airflow.git
-    branch: v2-1-stable
+    repo: https://github.com/smedina1304/edc-airflow-spark-on-k8s.git
+    branch: main
     rev: HEAD
     depth: 1
     # the number of consecutive failures allowed before aborting
     maxFailures: 0
     # subpath within the repo where dags are located
     # should be "" if dags are at repo root
-    subPath: "tests/dags"
+    subPath: "dags"
     # if your repo needs a user name password
     # you can load them to a k8s secret like the one below
     #   ---
