@@ -465,79 +465,79 @@ Verifique as instruções e siga as etapas de instalação:
     <br>
 
     Alterações realizadas no arquivo `my-airflow-values.yaml`:
+        
+        a. Executor:
 
-    a. Executor:
+        ```yaml
+            # Airflow executor
+            # Options: LocalExecutor, CeleryExecutor, KubernetesExecutor, CeleryKubernetesExecutor
+            # executor: "CeleryExecutor"
+            executor: "KubernetesExecutor"
+        ```
 
-    ```yaml
-        # Airflow executor
-        # Options: LocalExecutor, CeleryExecutor, KubernetesExecutor, CeleryKubernetesExecutor
-        # executor: "CeleryExecutor"
-        executor: "KubernetesExecutor"
-    ```
+        b. Environment variables:
 
-    b. Environment variables:
+        ```yaml
+            # Environment variables for all airflow containers
+            env: []
+            - name: AIRFLOW__CORE__REMOTE_LOGGING
+                value: 'True'
+            - name: AIRFLOW__CORE__REMOTE_BASE_LOG_FOLDER
+                value: 'gs://dl-techinical-apps/airflow-logs/'
+            - name: AIRFLOW__CORE__REMOTE_LOG_CONN_ID
+                value: 'my_gcp'
+        ```
 
-    ```yaml
-        # Environment variables for all airflow containers
-        env: []
-        - name: AIRFLOW__CORE__REMOTE_LOGGING
-            value: 'True'
-        - name: AIRFLOW__CORE__REMOTE_BASE_LOG_FOLDER
-            value: 'gs://dl-techinical-apps/airflow-logs/'
-        - name: AIRFLOW__CORE__REMOTE_LOG_CONN_ID
-            value: 'my_gcp'
-    ```
+        c. Create initial user:
 
-    c. Create initial user:
+        ```yaml
+            # Create initial user.
+            defaultUser:
+                enabled: true
+                role: Admin
+                username: smedina
+                email: smedina1304@gmail.com
+                firstName: Sergio
+                lastName: Medina
+                password: admin
+        ```
 
-    ```yaml
-        # Create initial user.
-        defaultUser:
-            enabled: true
-            role: Admin
-            username: smedina
-            email: smedina1304@gmail.com
-            firstName: Sergio
-            lastName: Medina
-            password: admin
-    ```
+        d. Service type.
 
-    d. Service type.
+        ```yaml
+            service:
+                #type: ClusterIP
+                type: loadBalancer
+        ```
 
-    ```yaml
-        service:
-            #type: ClusterIP
-            type: loadBalancer
-    ```
+        e. Redis disable.
 
-    e. Redis disable.
+        ```yaml
+            # Configuration for the redis provisioned by the chart
+            redis:
+                enabled: false
+        ```
 
-    ```yaml
-        # Configuration for the redis provisioned by the chart
-        redis:
-            enabled: false
-    ```
+        f. DAGs\Gitsync enable
 
-    f. DAGs\Gitsync enable
+        ```yaml
+            gitSync:
+                enabled: false
 
-    ```yaml
-        gitSync:
-            enabled: false
-
-            # git repo clone url
-            # ssh examples ssh://git@github.com/apache/airflow.git
-            # git@github.com:apache/airflow.git
-            # https example: https://github.com/apache/airflow.git
-            repo: https://github.com/smedina1304/edc-airflow-spark-on-k8s.git
-            branch: main
-            rev: HEAD
-            depth: 1
-            # the number of consecutive failures allowed before aborting
-            maxFailures: 0
-            # subpath within the repo where dags are located
-            # should be "" if dags are at repo root
-            subPath: "dags"
-    ```
+                # git repo clone url
+                # ssh examples ssh://git@github.com/apache/airflow.git
+                # git@github.com:apache/airflow.git
+                # https example: https://github.com/apache/airflow.git
+                repo: https://github.com/smedina1304/edc-airflow-spark-on-k8s.git
+                branch: main
+                rev: HEAD
+                depth: 1
+                # the number of consecutive failures allowed before aborting
+                maxFailures: 0
+                # subpath within the repo where dags are located
+                # should be "" if dags are at repo root
+                subPath: "dags"
+        ```
 
 
 
