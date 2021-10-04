@@ -208,7 +208,7 @@ executor: "KubernetesExecutor"
 allowPodLaunching: true
 
 # Environment variables for all airflow containers
-env: []
+env:
   - name: AIRFLOW__CORE__REMOTE_LOGGING
     value: 'True'
   - name: AIRFLOW__CORE__REMOTE_BASE_LOG_FOLDER
