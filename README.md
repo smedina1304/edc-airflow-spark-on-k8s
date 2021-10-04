@@ -42,7 +42,7 @@ Links de referência deste projeto:
 ## Preparação do ambiente Python:
 
 - Versão da Linguagem Python 3.8 ou superior deve estar instalada.
-    <br>
+    
     ```shell
     > python --version
         Python 3.8.2
@@ -53,7 +53,6 @@ Links de referência deste projeto:
     <br>
 
 - Clonar o repositório deste projeto na sua máquina de desenvolvimento, para esta ação via linha de comando selecione a pasta que recebera o projeto e execute o comando `git`, caso prefeira outro procedimento esta ação é livre:
-    <br>
 
     ```shell
     > git clone https://github.com/smedina1304/edc-airflow-spark-on-k8s.git
@@ -64,7 +63,6 @@ Links de referência deste projeto:
 
 
 - Criando o ambiente virtual Python **`venv`**, para isolar e controlar o versionamento de pacotes a ser utilizado. A criação do ambiente virtual deve ser realizado na pasta *root* do projeto.
-    <br>
 
     ```shell
     > python -m venv venv
@@ -72,7 +70,6 @@ Links de referência deste projeto:
     <br>
 
 - Para ativar o ambiente **`venv`**:
-    <br>
 
     - Linux e Mac:
     ```shell
@@ -84,7 +81,6 @@ Links de referência deste projeto:
         <br>
 
         - No Windows via Powershell utilizar "`activate.bat`".
-        <br>
 
         ```shell
         > .\venv\Scripts\Activate.ps1
@@ -92,7 +88,6 @@ Links de referência deste projeto:
         <br>
 
         - No Windows via CMD utilizar "`activate.bat`".
-        <br>
 
         ```shell
         > .\venv\Scripts\activate.bat
@@ -102,7 +97,6 @@ Links de referência deste projeto:
     :point_right: *Atenção: Para verificar que está funcionando e o ambiente foi ativado, deve aparecer o nome do ambiente destacado com prefixo do seu prompt de comandos.*
     <br>
     - Conforme abaixo:
-    <br>
 
     ```shell
     (venv)
@@ -111,7 +105,6 @@ Links de referência deste projeto:
 
 
 - Para desativar o ambiente **`venv`**:
-    <br>
 
     ```shell
     > deactivate
@@ -132,6 +125,7 @@ Links de referência deste projeto:
     <br>
 
     Passo de instalação dos pacotes via arquivo *`requirements.txt`*:
+
     ```shell
     > pip install -r requirements.txt
     ```
@@ -171,6 +165,7 @@ A utilização de ferramentas via CLI (*"command line"*) é importante pois pode
     <br>
 
 - Verificar as instalações:
+
    ``` shell
     > aws --version
     aws-cli/2.2.31 Python/3.8.8 Darwin/19.6.0 exe/x86_64 prompt/off
@@ -204,7 +199,6 @@ A utilização de ferramentas via CLI (*"command line"*) é importante pois pode
 - Google Cloud - GCP.
 
     - Após instalação do `gcloud`, conforme instruções e o instalador que foi baixado verifique as informações de configuração antes de iniciar a criação do cluster:
-        <br>
 
         ```shell
         > gcloud config list             
@@ -332,7 +326,6 @@ A utilização de ferramentas via CLI (*"command line"*) é importante pois pode
     <br>
     
     Verificando o contexto de acesso.
-    <br>
 
     ```shell
         > kubectx
@@ -341,7 +334,6 @@ A utilização de ferramentas via CLI (*"command line"*) é importante pois pode
 
     <br>
     Listando nos Nodes dos Cluster.
-    <br>
 
     ```shell
         > kubectl get nodes
@@ -374,3 +366,79 @@ A utilização de ferramentas via CLI (*"command line"*) é importante pois pode
     ```
     :point_right: *Importante: Confirme a DELEÇÃO com [Enter] ou [Y].*
 
+    <br>
+    <br>
+
+## Preparação e Deploy do Airflow no k8s:
+
+Para a orquestração dos pipelines de processamento de dados estaremos utilizando o Apache Airflow, e para fazer o deploy no cluster k8s iremos utilizar uma imagem `Helm` que pode ser localizada no link abaixo:
+<br>
+Helm Chart for Apache Airflow:
+https://airflow.apache.org/docs/helm-chart
+<br>
+
+Verifique as instruções e siga as etapas de instalação:
+
+
+1. Criação do namespace `ariflow`,caso não existe em seu cluster k8s.
+    <br>
+    Para verificar os namespaces existentes utilize o comando abaixo e verifique na lista retornada:
+
+    ```shell
+        > kubectl get namespaces
+    ```
+    
+    <br>
+
+    Para criar o namespace *`airflow`*:
+
+    ```shell
+        > kubectl create namespace airflow
+    ```
+
+    <br>
+
+    Apenas como verificação você pode utilizar o comando para listar todos os namespaces e verificar se o *`airflow`* foi criado devidamente, e/ou também pode utilizar o comando abaixo para verificar todos os recursos disponíveis em um namespace, no caso *`airflow`* quando acabar de ser criado não deve apresentar nenhum item.
+
+    ```shell
+        > kubectl get all -n airflow
+    ```
+    <br>
+
+2. Atualização a imagem chart do *`airflow`* no repositório *`helm repo`* local antes do deploy no k8s.
+    <br>
+    Para incluir a imagem chart do `airflow` localmente, execute este comando:
+
+    ```shell
+        > helm repo add apache-airflow https://airflow.apache.org
+    ```
+
+    <br>
+    Se já houver a imagem do chart do `airflow` baixada anteriormente, execute a atualização do repositório para garantir que está com a versão mais atualizada.
+    
+    ```shell
+        > helm repo update
+    ```
+
+    <br>
+
+3. Preparação do arquivo `values` que contém as instuções para deploy no `k8s` via `helm`.
+    <br>
+    Para gerar o arquivo `values` para o deploy, executar o comando abaixo:
+    
+    ```shell
+        > helm show values apache-airflow/airflow > step-2-airflow/my-airflow-values.yaml
+    ```
+
+    Onde:
+    - Sintaxe - `helm show values [CHART] [flags]`
+    - [CHART] - identificação do chart que foi feito o download no passo acima.
+    - [flags] - parametros adicionais não utilizados neste exemplo.
+
+    <br>
+
+    Output: (operador `>`)
+    - step-2-airflow - pasta do projeto para armazenar as instruções ou configurações de deploy para k8s via `helm`.
+    - my-airflow-values.yaml - nome do arquivo que irá armazenar as alterações das configurações originais.
+
+   
