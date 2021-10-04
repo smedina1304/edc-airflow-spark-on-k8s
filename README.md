@@ -466,6 +466,27 @@ Verifique as instruções e siga as etapas de instalação:
 
     Alterações realizadas no arquivo `my-airflow-values.yaml`:
 
+    - Version:
+
+        ```yaml
+
+            # Airflow home directory
+            # Used for mount paths
+            airflowHome: /opt/airflow
+
+            # Default airflow repository -- overrides all the specific images below
+            defaultAirflowRepository: apache/airflow
+
+            # Default airflow tag to deploy
+            defaultAirflowTag: "2.1.2"
+
+            # Airflow version (Used to make some decisions based on Airflow Version being deployed)
+            airflowVersion: "2.1.2"
+        ```
+
+        :point_right: *Atenção: é muito importante que seja verificado a versão do airflow, pois algumas variáveis de ambiente são diretamente ligadas as versão do airflow. Para este caso indica-se manter a `versão 2.1.2`.*
+        <br>
+
     - Executor:
 
         ```yaml
@@ -522,7 +543,7 @@ Verifique as instruções e siga as etapas de instalação:
 
         ```yaml
             gitSync:
-                enabled: false
+                enabled: true
 
                 # git repo clone url
                 # ssh examples ssh://git@github.com/apache/airflow.git
@@ -556,4 +577,29 @@ Verifique as instruções e siga as etapas de instalação:
     ```shell
         > helm install airflow apache-airflow/airflow -f step-2-airflow/my-airflow-values.yaml -n airflow --debug
     ```
+    <br>
+
+    :point_right: *Atenção: Sendo necessário desistalar o airflow por qualquer motivos, utilize o comando abaixo ou busque uma referência do mesmo para atendimento da necessidade:*
+
+    ```shell
+        > helm uninstall airflow -n airflow --debug
+    ```
+
+    Após uma soliciatação de desinstalação sempre verifique se os recursos foram liberados.
+    <br>
+
+6. Recuperar a `Fernet Key value`.
+
+    Caso não tenha sido definido a `Fernet Key value` no arquivo `yaml`, como no caso deste tutorial, a mesma é gerada automaticamente e sendo necessário a sua utilização, é possível buscar o valor desta chave utilizando o comando abaixo:
+
+    ```shell
+        > kubectl get secret --namespace airflow airflow-fernet-key -o jsonpath="{.data.fernet-key}" | base64 --decode
+    ``` 
+
+    <br>
+
+
+
+
+
     
