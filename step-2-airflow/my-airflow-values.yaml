@@ -733,7 +733,7 @@ webserver:
 
   service:
     #type: ClusterIP
-    type: loadBalancer
+    type: LoadBalancer
     ## service annotations
     annotations: {}
     ports:
