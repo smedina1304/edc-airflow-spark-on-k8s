@@ -432,13 +432,13 @@ Verifique as instruções e siga as etapas de instalação:
 
     Onde:
     - Sintaxe - `helm show values [CHART] [flags]`
-    - [CHART] - identificação do chart que foi feito o download no passo acima.
-    - [flags] - parametros adicionais não utilizados neste exemplo.
+    - `[CHART]` - identificação do chart que foi feito o download no passo acima.
+    - `[flags]` - parametros adicionais não utilizados neste exemplo.
 
     <br>
 
     Output: (operador `>`)
-    - step-2-airflow - pasta do projeto para armazenar as instruções ou configurações de deploy para k8s via `helm`.
-    - my-airflow-values.yaml - nome do arquivo que irá armazenar as alterações das configurações originais.
+    - `step-2-airflow` - pasta do projeto para armazenar as instruções ou configurações de deploy para k8s via helm.
+    - `my-airflow-values.yaml` - nome do arquivo que irá armazenar as alterações das configurações originais.
 
    
