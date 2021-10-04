@@ -257,7 +257,7 @@ A utilização de ferramentas via CLI (*"command line"*) é importante pois pode
         "https://www.googleapis.com/auth/servicecontrol",/
         "https://www.googleapis.com/auth/service.management.readonly",/
         "https://www.googleapis.com/auth/trace.append" /
-        --max-pods-per-node "110" --num-nodes "6" /
+        --max-pods-per-node "110" --num-nodes "4" /
         --logging=SYSTEM,WORKLOAD --monitoring=SYSTEM /
         --enable-ip-alias --network "projects/edc-igti-smedina/global/networks/default" /
         --subnetwork "projects/edc-igti-smedina/regions/us-east1/subnetworks/default" /
