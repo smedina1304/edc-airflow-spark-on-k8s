@@ -465,8 +465,8 @@ Verifique as instruções e siga as etapas de instalação:
     <br>
 
     Alterações realizadas no arquivo `my-airflow-values.yaml`:
-        
-        a. Executor:
+
+    - Executor:
 
         ```yaml
             # Airflow executor
@@ -475,7 +475,7 @@ Verifique as instruções e siga as etapas de instalação:
             executor: "KubernetesExecutor"
         ```
 
-        b. Environment variables:
+    - Environment variables:
 
         ```yaml
             # Environment variables for all airflow containers
@@ -488,7 +488,7 @@ Verifique as instruções e siga as etapas de instalação:
                 value: 'my_gcp'
         ```
 
-        c. Create initial user:
+    - Create initial user:
 
         ```yaml
             # Create initial user.
@@ -502,7 +502,7 @@ Verifique as instruções e siga as etapas de instalação:
                 password: admin
         ```
 
-        d. Service type.
+    - Service type.
 
         ```yaml
             service:
@@ -510,7 +510,7 @@ Verifique as instruções e siga as etapas de instalação:
                 type: loadBalancer
         ```
 
-        e. Redis disable.
+    - Redis disable.
 
         ```yaml
             # Configuration for the redis provisioned by the chart
@@ -518,7 +518,7 @@ Verifique as instruções e siga as etapas de instalação:
                 enabled: false
         ```
 
-        f. DAGs\Gitsync enable
+    - DAGs\Gitsync enable
 
         ```yaml
             gitSync:
@@ -539,7 +539,7 @@ Verifique as instruções e siga as etapas de instalação:
                 subPath: "dags"
         ```
 
-
+    <br>
 
 
 4. Airflow DAGs, criando uma pasta para armazenar as dags e um exemplo para teste de funcionalidade do airflow.
