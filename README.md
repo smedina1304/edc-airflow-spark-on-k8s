@@ -401,7 +401,7 @@ https://airflow.apache.org/docs/helm-chart
 Verifique as instruções e siga as etapas de instalação:
 
 
-1. Criação do namespace `ariflow`,caso não existe em seu cluster k8s.
+1. Criação do namespace `ariflow`,caso não exista em seu cluster k8s.
     <br>
     Para verificar os namespaces existentes utilize o comando abaixo e verifique na lista retornada:
 
@@ -597,9 +597,117 @@ Verifique as instruções e siga as etapas de instalação:
     ``` 
 
     <br>
+    <br>
+## Preparação e Deploy do Spark Operator no k8s:
 
+Para executar jobs spark no k8s estaremos utilizando uma imagem do Spark (base gcr.io/spark-operator/spark-py:v3.0.0), e para definir os cada job spark com recursos `sparkapplication` no k8s iremos utilizar uma imagem `Helm` que pode ser localizada no link abaixo:
+<br>
+Helm Chart for Spark Operator:
+https://googlecloudplatform.github.io/spark-on-k8s-operator
+<br>
 
+1. Criação do namespace `processing`,caso não exista em seu cluster k8s.
+    <br>
+    Para verificar os namespaces existentes utilize o comando abaixo e verifique na lista retornada:
 
-
-
+    ```shell
+        > kubectl get namespaces
+    ```
     
+    <br>
+
+    Para criar o namespace *`processing`*:
+
+    ```shell
+        > kubectl create namespace processing
+    ```
+
+2. Atualização a imagem chart do *`spark-operator`* no repositório *`helm repo`* local antes do deploy no k8s.
+    <br>
+    Para incluir a imagem chart do `spark-operator` localmente, execute este comando:
+
+    ```shell
+        > helm repo add spark-operator https://googlecloudplatform.github.io/spark-on-k8s-operator
+    ```
+
+    <br>
+    Se já houver a imagem do chart do `spark-operator` baixada anteriormente, execute a atualização do repositório para garantir que está com a versão mais atualizada.
+    
+    ```shell
+        > helm repo update
+    ```
+
+    <br>
+
+3. Criação Service Account `spark` no `k8s` como requisito de deploy `spark-operator`.
+    <br>
+    Para gerar o Service Account executar o comando abaixo:
+    
+    ```shell
+        > kubectl create serviceaccount spark -n processing
+    ```
+
+4. Criação Role Binding `spark` no `k8s` como requisito de deploy `spark-operator`.
+    <br>
+    Para gerar o Service Account executar o comando abaixo:
+    
+    ```shell
+        > kubectl create clusterrolebinding spark-role-binding --clusterrole=edit --serviceaccount=processing:spark -n processing
+    ```
+
+5. Delpoy do Spark Operator no Cluster k8s.
+
+    Após as preparações anteriores finalizadas executar o seguinte comando:
+
+    ```shell
+        > helm install spark spark-operator/spark-operator -n processing --debug
+    ```
+    <br>
+
+    :point_right: *Atenção: Sendo necessário desistalar o airflow por qualquer motivos, utilize o comando abaixo ou busque uma referência do mesmo para atendimento da necessidade:*
+
+    ```shell
+        > helm uninstall spark -n processing --debug
+    ```
+
+    Após uma soliciatação de desinstalação sempre verifique se os recursos foram liberados.
+    <br>
+
+6. Preparação da imagem Docker para executar os jobs spark como recurso do tipo `sparkapplication`.
+    <br>
+    Na pasta `step-3-spark` existem dois arquivos *Dockerfile*, um que copia arquivos *jars* compativeis com a versão do spark compativel com a AWS e outro com o GCP.
+    <br>
+    Basicamente para geral o build das imagens foi utilizado os comandos abaixo:
+    <br>
+    AWS - Spark 3.0.0
+    
+    ```shell
+        > docker build -t smedina1304/spark-operator:3.0.0-aws -f Dockerfile_aws .
+    ```
+
+    GCP - Spark 3.0.0
+
+    ```shell
+        > docker build -t smedina1304/spark-operator:3.0.0-gcp -f Dockerfile_gcp .
+    ```
+
+    Ambas as imagems estão disponiveis no Docker Hub:
+    https://hub.docker.com/repository/docker/smedina1304/spark-operator
+
+    <br>
+
+    Caso tenha a preferência de buscar mais detalhes para gerar uma image spark paro o k8s, utilize o link como referência: https://github.com/GoogleCloudPlatform/spark-on-k8s-operator/blob/master/docs/user-guide.md#writing-a-sparkapplication-spec
+
+    <br>
+
+6. Criando uma Secret com as credenciais para acesso aos buckets do Data Lake.
+
+    Credenciais GCP:
+    ```shell
+        > kubectl create secret generic gcp_credentials --from-file=[Path file Service Account Json]
+    ```
+
+kubectl create secret generic gcp_credentials \
+    --from-file=~/Downloads/edc-igti-smedina-4920e12ac565.json
+
+kubectl create secret generic gcp_credentials --from-literal "gcp_sa_json=$(cat ~/Downloads/edc-igti-smedina-4920e12ac565.json)"
