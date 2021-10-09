@@ -569,6 +569,7 @@ Verifique as instruções e siga as etapas de instalação:
     <br>
     Foi adicionado uma código de exemplo para testes de funcionamento do `airflow` com o nome `example_taskflow_api_etl.py`
     <br>
+    <br>
 
 5. Delpoy do Airflow no Cluster k8s.
 
@@ -586,6 +587,7 @@ Verifique as instruções e siga as etapas de instalação:
     ```
 
     Após uma soliciatação de desinstalação sempre verifique se os recursos foram liberados.
+    <br>
     <br>
 
 6. Recuperar a `Fernet Key value`.
@@ -621,6 +623,7 @@ https://googlecloudplatform.github.io/spark-on-k8s-operator
     ```shell
         > kubectl create namespace processing
     ```
+    <br>
 
 2. Atualização a imagem chart do *`spark-operator`* no repositório *`helm repo`* local antes do deploy no k8s.
     <br>
@@ -646,6 +649,7 @@ https://googlecloudplatform.github.io/spark-on-k8s-operator
     ```shell
         > kubectl create serviceaccount spark -n processing
     ```
+    <br>
 
 4. Criação Role Binding `spark` no `k8s` como requisito de deploy `spark-operator`.
     <br>
@@ -654,6 +658,7 @@ https://googlecloudplatform.github.io/spark-on-k8s-operator
     ```shell
         > kubectl create clusterrolebinding spark-role-binding --clusterrole=edit --serviceaccount=processing:spark -n processing
     ```
+    <br>
 
 5. Delpoy do Spark Operator no Cluster k8s.
 
@@ -672,12 +677,14 @@ https://googlecloudplatform.github.io/spark-on-k8s-operator
 
     Após uma soliciatação de desinstalação sempre verifique se os recursos foram liberados.
     <br>
+    <br>
 
 6. Preparação da imagem Docker para executar os jobs spark como recurso do tipo `sparkapplication`.
     <br>
     Na pasta `step-3-spark` existem dois arquivos *Dockerfile*, um que copia arquivos *jars* compativeis com a versão do spark compativel com a AWS e outro com o GCP.
     <br>
     Basicamente para geral o build das imagens foi utilizado os comandos abaixo:
+    <br>
     <br>
     AWS - Spark 3.0.0
     
@@ -692,7 +699,7 @@ https://googlecloudplatform.github.io/spark-on-k8s-operator
     ```
 
     Ambas as imagems estão disponiveis no Docker Hub:
-    https://hub.docker.com/repository/docker/smedina1304/spark-operator
+    https://hub.docker.com/r/smedina1304/spark-operator
 
     <br>
 
@@ -700,14 +707,52 @@ https://googlecloudplatform.github.io/spark-on-k8s-operator
 
     <br>
 
-6. Criando uma Secret com as credenciais para acesso aos buckets do Data Lake.
+6. Criando uma `Secret` com as credenciais para acesso aos buckets do Data Lake.
 
-    Credenciais GCP:
+    GCP - Credenciais de acesso via Arquivo JSON:
+    <br>
+
+    Carregando o conteúdo do arquivo em uma variável de ambiente:
+    
     ```shell
-        > kubectl create secret generic gcp_credentials --from-file=[Path file Service Account Json]
+        > export my_gcp_credential=$(cat ./path-file-service-account-gcp.json)    
+    ```
+    <br>
+
+    Para verificar se o conteúdo foi carregado na variável de ambiente utilize o comando:
+
+    ```shell
+        > echo $my_gcp_credential    
+    ```    
+    <br>
+
+    Criando uma `Secret` no k8s com as Credenciais GCP:
+
+    ```shell
+        > kubectl create secret generic gcp-credentials --from-literal=gcp_sa_json=$my_gcp_credential -n processing
+    ```
+    <br>
+
+    Para verificar se a `Secret` foi criada corretamento, claro que o conteúdo não será exposto, utilize o comando abaixo:
+
+    ```shell
+        > kubectl describe secret gcp-credentials -n processing
+        Name:         gcp-credentials
+        Namespace:    processing
+        Labels:       <none>
+        Annotations:  <none>
+
+        Type:  Opaque
+
+        Data
+        ====
+        gcp_sa_json:  2322 bytes        
     ```
 
-kubectl create secret generic gcp_credentials \
-    --from-file=~/Downloads/edc-igti-smedina-4920e12ac565.json
+    Para remover a variável de ambiente utilizada para carregar o JSON utilize o comando baixo:
 
-kubectl create secret generic gcp_credentials --from-literal "gcp_sa_json=$(cat ~/Downloads/edc-igti-smedina-4920e12ac565.json)"
+    ```shell
+        > unset my_gcp_credential    
+    ``` 
+    <br>
+    

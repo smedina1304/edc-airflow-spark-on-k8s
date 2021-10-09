@@ -1,13 +1,21 @@
 apiVersion: "sparkoperator.k8s.io/v1beta2"
 kind: SparkApplication
 metadata:
-  name: job-pyspark-batch-346e0ba6
+  name: job-pyspark-batch-202110062022
   namespace: processing
 spec:
+  volumes:
+    - name: ivy
+      emptyDir: {}
+  sparkConf:
+    spark.jars.packages: "com.google.cloud.bigdataoss:gcs-connector:hadoop2-2.2.1"
+    spark.driver.extraJavaOptions: "-Divy.cache.dir=/tmp -Divy.home=/tmp"
+    spark.kubernetes.allocation.batch.size: "10"
+    spark.hadoop.fs.gs.impl: "com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem"
   type: Python
   pythonVersion: "3"
   mode: cluster
-  image: "docker.io/smedina1304/spark-operator:v3.0.0-gcp"
+  image: "docker.io/smedina1304/spark-operator:3.0.0-gcp"
   imagePullPolicy: Always
   mainApplicationFile: gs://dl-techinical-apps/job-spark/test/job-spark-processing-titanic.py
   sparkVersion: "3.0.0"
@@ -16,7 +24,7 @@ spec:
   driver:
     envSecretKeyRefs:
       GCP_SERVICE_ACCOUNT_JSON:
-        name: gcp_credentials
+        name: gcp-credentials
         key: gcp_sa_json
     cores: 1
     coreLimit: "1200m"
@@ -24,6 +32,9 @@ spec:
     labels:
       version: 3.0.0
     serviceAccount: spark
+    volumeMounts:
+      - name: ivy
+        mountPath: /tmp    
   executor:
     envSecretKeyRefs:
       GCP_SERVICE_ACCOUNT_JSON:
@@ -34,3 +45,6 @@ spec:
     memory: "4g"
     labels:
       version: 3.0.0
+    volumeMounts:
+      - name: ivy
+        mountPath: /tmp

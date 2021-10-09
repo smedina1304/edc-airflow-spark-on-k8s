@@ -127,3 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# others
+.DS_Store
+step-1-cluster/.DS_Store
+step-2-airflow/.DS_Store
+step-3-spark/.DS_Store
