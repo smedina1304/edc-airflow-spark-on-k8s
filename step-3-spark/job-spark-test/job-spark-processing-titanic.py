@@ -32,6 +32,10 @@ sc = SparkContext(conf=conf).getOrCreate()
 
 if __name__ == "__main__":
 
+    print('*****************')
+    print('Iniciando')
+    print('*****************')
+
     # init spark session
     spark = SparkSession\
             .builder\

@@ -1,7 +1,7 @@
 apiVersion: "sparkoperator.k8s.io/v1beta2"
 kind: SparkApplication
 metadata:
-  name: job-pyspark-batch-202110062022
+  name: job-pyspark-test
   namespace: processing
 spec:
   type: Python
@@ -9,7 +9,7 @@ spec:
   mode: cluster
   image: "docker.io/smedina1304/spark-operator:3.0.0-gcp"
   imagePullPolicy: Always
-  mainApplicationFile: gs://dl-techinical-apps/job-spark/test/job-spark-processing-titanic.py
+  mainApplicationFile: https://raw.githubusercontent.com/smedina1304/edc-airflow-spark-on-k8s/main/step-3-spark/job-spark-test/job-spark-processing-titanic.py
   sparkVersion: "3.0.0"
   restartPolicy:
     type: Never
@@ -27,7 +27,7 @@ spec:
   executor:
     envSecretKeyRefs:
       GCP_SERVICE_ACCOUNT_JSON:
-        name: gcp_credentials
+        name: gcp-credentials
         key: gcp_sa_json
     cores: 3
     instances: 3

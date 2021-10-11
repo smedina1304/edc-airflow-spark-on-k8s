@@ -7,7 +7,7 @@ USER root:root
 RUN mkdir -p /app 
 
 #copy jars files
-COPY ./jars-gcp/ /opt/spark/jars
+#COPY ./jars-gcp/ /opt/spark/jars
 
 #set main work directory
 WORKDIR /app
