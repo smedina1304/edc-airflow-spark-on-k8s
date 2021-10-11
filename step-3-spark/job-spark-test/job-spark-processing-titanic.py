@@ -15,8 +15,6 @@ import os
 #     .set('spark.jars.packages', 'org.apache.hadoop:hadoop-aws:2.7.3')
 # )
 
-
-
 gcp_sa_json = os.environ['GCP_SERVICE_ACCOUNT_JSON']
 
 # set conf - gcp

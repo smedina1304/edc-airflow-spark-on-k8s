@@ -500,7 +500,7 @@ Verifique as instruções e siga as etapas de instalação:
 
         ```yaml
             # Environment variables for all airflow containers
-            env: []
+            env:
             - name: AIRFLOW__CORE__REMOTE_LOGGING
                 value: 'True'
             - name: AIRFLOW__CORE__REMOTE_BASE_LOG_FOLDER

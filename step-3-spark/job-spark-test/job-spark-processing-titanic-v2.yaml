@@ -1,0 +1,36 @@
+apiVersion: "sparkoperator.k8s.io/v1beta2"
+kind: SparkApplication
+metadata:
+  name: job-pyspark-batch-202110062022
+  namespace: processing
+spec:
+  type: Python
+  pythonVersion: "3"
+  mode: cluster
+  image: "docker.io/smedina1304/spark-operator:3.0.0-gcp"
+  imagePullPolicy: Always
+  mainApplicationFile: gs://dl-techinical-apps/job-spark/test/job-spark-processing-titanic.py
+  sparkVersion: "3.0.0"
+  restartPolicy:
+    type: Never
+  driver:
+    envSecretKeyRefs:
+      GCP_SERVICE_ACCOUNT_JSON:
+        name: gcp-credentials
+        key: gcp_sa_json
+    cores: 1
+    coreLimit: "1200m"
+    memory: "4g"
+    labels:
+      version: 3.0.0
+    serviceAccount: spark 
+  executor:
+    envSecretKeyRefs:
+      GCP_SERVICE_ACCOUNT_JSON:
+        name: gcp_credentials
+        key: gcp_sa_json
+    cores: 3
+    instances: 3
+    memory: "4g"
+    labels:
+      version: 3.0.0

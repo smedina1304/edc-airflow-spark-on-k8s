@@ -133,3 +133,4 @@ dmypy.json
 step-1-cluster/.DS_Store
 step-2-airflow/.DS_Store
 step-3-spark/.DS_Store
+step-3-spark/job-spark-test/.DS_Store
