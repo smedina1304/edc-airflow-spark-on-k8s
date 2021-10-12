@@ -42,7 +42,7 @@ if __name__ == "__main__":
             .appName("Repartition Job")\
             .getOrCreate()
 
-    spark.sparkContext.setLogLevel("WARN")
+    #spark.sparkContext.setLogLevel("WARN")
 
     print('*****************')
     print('Lendo titanic.csv')
@@ -52,7 +52,7 @@ if __name__ == "__main__":
         spark
         .read
         .format('csv')
-        .options(header='true', inferSchema='true', delimiter=';')
+        .options(header='true', inferSchema='true', delimiter=',')
         .load('gs://dl-techinical-apps/samples/titanic/raw/titanic.csv')
     )
     
