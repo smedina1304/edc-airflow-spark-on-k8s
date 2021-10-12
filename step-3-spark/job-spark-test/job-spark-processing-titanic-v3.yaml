@@ -28,7 +28,7 @@ spec:
     type: Never
   driver:
     envSecretKeyRefs:
-      GCP_SERVICE_ACCOUNT_JSON:
+      GOOGLE_APPLICATION_CREDENTIALS:
         name: gcp-credentials
         key: gcp_sa_json
     cores: 1
@@ -42,7 +42,7 @@ spec:
         mountPath: /tmp    
   executor:
     envSecretKeyRefs:
-      GCP_SERVICE_ACCOUNT_JSON:
+      GOOGLE_APPLICATION_CREDENTIALS:
         name: gcp-credentials
         key: gcp_sa_json
     cores: 3

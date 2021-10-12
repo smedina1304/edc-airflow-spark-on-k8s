@@ -15,7 +15,7 @@ import os
 #     .set('spark.jars.packages', 'org.apache.hadoop:hadoop-aws:2.7.3')
 # )
 
-gcp_sa_json = os.environ['GCP_SERVICE_ACCOUNT_JSON']
+gcp_sa_json = os.environ['GOOGLE_APPLICATION_CREDENTIALS']
 
 # set conf - gcp
 conf = (
