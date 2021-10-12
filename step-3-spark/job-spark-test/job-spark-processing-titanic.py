@@ -35,6 +35,12 @@ if __name__ == "__main__":
     print('*****************')
     print('Iniciando')
     print('*****************')
+    print('gcp_sa_json:')
+    print(gcp_sa_json)
+    print('*****************')
+
+
+
 
     # init spark session
     spark = SparkSession\
