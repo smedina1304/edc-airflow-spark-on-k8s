@@ -21,7 +21,7 @@ gcp_sa_json = os.environ['GCP_SERVICE_ACCOUNT_JSON']
 conf = (
 SparkConf()
     .set("fs.gs.impl","com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem")
-    .set("fs.AbstractFileSystem.gs.impl", "com.google.cloud.hadoop.fs.gcs.GoogleHadoopFS")
+    .set("fs.AbstractFileSystem.gs.impl", "com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem")
     .set("fs.gs.auth.service.account.enable", "true")
     .set("fs.gs.auth.service.account.json.keyfile", gcp_sa_json)
 )
