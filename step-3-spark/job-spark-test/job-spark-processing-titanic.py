@@ -33,7 +33,7 @@ sc = SparkContext(conf=conf).getOrCreate()
 if __name__ == "__main__":
 
     print('*****************')
-    print('Iniciando')
+    print('Iniciando SparkSession')
     print('*****************')
 
     # init spark session
@@ -43,6 +43,10 @@ if __name__ == "__main__":
             .getOrCreate()
 
     spark.sparkContext.setLogLevel("WARN")
+
+    print('*****************')
+    print('Lendo titanic.csv')
+    print('*****************')
 
     df = (
         spark
@@ -55,6 +59,10 @@ if __name__ == "__main__":
 
     df.show()
     df.printSchema()
+
+    print('*****************')
+    print('Gravando parquet')
+    print('*****************')    
 
     (df
     .write
