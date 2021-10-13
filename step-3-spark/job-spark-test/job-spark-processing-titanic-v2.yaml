@@ -1,36 +1,39 @@
 apiVersion: "sparkoperator.k8s.io/v1beta2"
 kind: SparkApplication
 metadata:
-  name: job-pyspark-test
+  name: job-pyspark-batch-202110062022
   namespace: processing
 spec:
+  sparkConf:
+    spark.jars.packages: "com.google.cloud.bigdataoss:gcs-connector:hadoop3-2.2.1"
+    spark.kubernetes.allocation.batch.size: "10"
   type: Python
   pythonVersion: "3"
   mode: cluster
-  image: "docker.io/smedina1304/spark-operator:3.0.0-gcp"
+  image: "docker.io/smedina1304/spark-operator:3.1.1-gcp"
   imagePullPolicy: Always
   mainApplicationFile: https://raw.githubusercontent.com/smedina1304/edc-airflow-spark-on-k8s/main/step-3-spark/job-spark-test/job-spark-processing-titanic.py
-  sparkVersion: "3.0.0"
+  sparkVersion: "3.1.1"
   restartPolicy:
     type: Never
   driver:
     envSecretKeyRefs:
-      GCP_SERVICE_ACCOUNT_JSON:
+      GOOGLE_APPLICATION_CREDENTIALS:
         name: gcp-credentials
         key: gcp_sa_json
     cores: 1
     coreLimit: "1200m"
     memory: "4g"
     labels:
-      version: 3.0.0
+      version: 3.1.1
     serviceAccount: spark 
   executor:
     envSecretKeyRefs:
-      GCP_SERVICE_ACCOUNT_JSON:
+      GOOGLE_APPLICATION_CREDENTIALS:
         name: gcp-credentials
         key: gcp_sa_json
     cores: 3
     instances: 3
     memory: "4g"
     labels:
-      version: 3.0.0
+      version: 3.1.1

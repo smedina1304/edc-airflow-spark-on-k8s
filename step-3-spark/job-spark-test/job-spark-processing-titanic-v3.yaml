@@ -7,6 +7,9 @@ spec:
   volumes:
     - name: ivy
       emptyDir: {}
+    - name: gcp-credentials
+      secret:
+        secretName: gcp-credentials
   sparkConf:
     spark.jars.packages: "com.google.cloud.bigdataoss:gcs-connector:hadoop3-2.2.0"
     spark.driver.extraJavaOptions: "-Divy.cache.dir=/tmp -Divy.home=/tmp"
@@ -14,9 +17,8 @@ spec:
   hadoopConf:
     "fs.gs.project.id": "edc-igti-smedina"
     "fs.gs.system.bucket": "dl-techinical-apps"
-    "google.cloud.auth.service.account.enable": "true" 
-    "fs.gs.impl": "com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem"
-    "fs.AbstractFileSystem.gs.impl": "com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem"
+    "google.cloud.auth.service.account.enable": "true"
+    "google.cloud.auth.service.account.json.keyfile": "/secrets/gcp-credentials.json"
   type: Python
   pythonVersion: "3"
   mode: cluster
@@ -27,10 +29,12 @@ spec:
   restartPolicy:
     type: Never
   driver:
-    envSecretKeyRefs:
-      GOOGLE_APPLICATION_CREDENTIALS:
-        name: gcp-credentials
-        key: gcp_sa_json
+    secrets:
+    - name: "gcp-credentials"
+      path: "/secrets/gcp-credentials.json"
+      secretType: GCPServiceAccount
+    envVars:
+      GOOGLE_APPLICATION_CREDENTIALS:  "/secrets/gcp-credentials.json"
     cores: 1
     coreLimit: "1200m"
     memory: "4g"
@@ -39,12 +43,17 @@ spec:
     serviceAccount: spark
     volumeMounts:
       - name: ivy
-        mountPath: /tmp    
+        mountPath: /tmp
+      - name: gcp-credentials
+        mountPath: /secrets/gcp-credentials.json
+        readOnly: true
   executor:
-    envSecretKeyRefs:
-      GOOGLE_APPLICATION_CREDENTIALS:
-        name: gcp-credentials
-        key: gcp_sa_json
+    secrets:
+    - name: "gcp-credentials"
+      path: "/secrets/gcp-credentials.json"
+      secretType: GCPServiceAccount
+    envVars:
+      GOOGLE_APPLICATION_CREDENTIALS:  "/secrets/gcp-credentials.json"
     cores: 3
     instances: 3
     memory: "4g"
@@ -53,3 +62,6 @@ spec:
     volumeMounts:
       - name: ivy
         mountPath: /tmp
+      - name: gcp-credentials
+        mountPath: /secrets/gcp-credentials.json
+        readOnly: true
