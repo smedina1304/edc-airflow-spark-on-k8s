@@ -7,18 +7,16 @@ spec:
   volumes:
     - name: ivy
       emptyDir: {}
-    - name: gcp-credentials
-      secret:
-        secretName: gcp-credentials
   sparkConf:
-    spark.jars.packages: "com.google.cloud.bigdataoss:gcs-connector:hadoop3-2.2.0"
+#    spark.jars.packages: "com.google.cloud.bigdataoss:gcs-connector:hadoop2-2.0.1"
     spark.driver.extraJavaOptions: "-Divy.cache.dir=/tmp -Divy.home=/tmp"
     spark.kubernetes.allocation.batch.size: "10"
   hadoopConf:
     "fs.gs.project.id": "edc-igti-smedina"
     "fs.gs.system.bucket": "dl-techinical-apps"
-    "google.cloud.auth.service.account.enable": "true"
-    "google.cloud.auth.service.account.json.keyfile": "/secrets/gcp-credentials.json"
+    "google.cloud.auth.service.account.enable": "true" 
+    "fs.gs.impl": "com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem"
+    "fs.AbstractFileSystem.gs.impl": "com.google.cloud.hadoop.fs.gcs.GoogleHadoopFS"
   type: Python
   pythonVersion: "3"
   mode: cluster
@@ -29,12 +27,10 @@ spec:
   restartPolicy:
     type: Never
   driver:
-    secrets:
-    - name: "gcp-credentials"
-      path: "/secrets/gcp-credentials.json"
-      secretType: GCPServiceAccount
-    envVars:
-      GOOGLE_APPLICATION_CREDENTIALS:  "/secrets/gcp-credentials.json"
+    envSecretKeyRefs:
+      GOOGLE_APPLICATION_CREDENTIALS:
+        name: gcp-credentials
+        key: gcp_sa_json
     cores: 1
     coreLimit: "1200m"
     memory: "4g"
@@ -43,25 +39,17 @@ spec:
     serviceAccount: spark
     volumeMounts:
       - name: ivy
-        mountPath: /tmp
-      - name: gcp-credentials
-        mountPath: /secrets/gcp-credentials.json
-        readOnly: true
+        mountPath: /tmp    
   executor:
-    secrets:
-    - name: "gcp-credentials"
-      path: "/secrets/gcp-credentials.json"
-      secretType: GCPServiceAccount
-    envVars:
-      GOOGLE_APPLICATION_CREDENTIALS:  "/secrets/gcp-credentials.json"
-    cores: 3
-    instances: 3
+    envSecretKeyRefs:
+      GOOGLE_APPLICATION_CREDENTIALS:
+        name: gcp-credentials
+        key: gcp_sa_json
+    cores: 2
+    instances: 2
     memory: "4g"
     labels:
       version: 3.1.1
     volumeMounts:
       - name: ivy
         mountPath: /tmp
-      - name: gcp-credentials
-        mountPath: /secrets/gcp-credentials.json
-        readOnly: true
