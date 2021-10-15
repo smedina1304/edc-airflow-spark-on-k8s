@@ -32,7 +32,7 @@ spec:
   driver:    
     cores: 1
     coreLimit: "1200m"
-    memory: "4g"
+    memory: "2g"
     labels:
       version: 3.1.1
     serviceAccount: spark 
@@ -47,7 +47,7 @@ spec:
   executor:
     cores: 2
     instances: 2
-    memory: "4g"
+    memory: "2g"
     labels:
       version: 3.1.1
     volumeMounts:
