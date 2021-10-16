@@ -42,7 +42,7 @@ if __name__ == "__main__":
             .appName("Repartition Job")\
             .getOrCreate()
 
-    #spark.sparkContext.setLogLevel("WARN")
+    spark.sparkContext.setLogLevel("WARN")
 
     print('*****************')
     print('Lendo titanic.csv')
