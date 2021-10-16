@@ -779,15 +779,15 @@ https://googlecloudplatform.github.io/spark-on-k8s-operator
     ```
     <br>
 
-    Para verificar se a `Secret` foi criada corretamente, utilize o comando abaixo:<br>
-    *Observe que o conteúdo não será exposto*.
+    Para verificar se a `Secret` foi criada corretamente, utilize o comando abaixo:
     <br>
 
     ```shell
     kubectl describe secret gcp-credentials -n processing
     ```
 
-    *Output:*
+    *Output:*<br>
+    *Observe que o conteúdo não será exposto*.
     ```console
     Name:         gcp-credentials-key
     Namespace:    processing
