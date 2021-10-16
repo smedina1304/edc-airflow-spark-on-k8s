@@ -779,7 +779,7 @@ https://googlecloudplatform.github.io/spark-on-k8s-operator
     ```
     <br>
 
-    Para verificar se a `Secret` foi criada corretamente, utilize o comando abaixo:
+    Para verificar se a `Secret` foi criada corretamente, utilize o comando abaixo:<br>
     *Observe que o conteúdo não será exposto*.
     <br>
 
