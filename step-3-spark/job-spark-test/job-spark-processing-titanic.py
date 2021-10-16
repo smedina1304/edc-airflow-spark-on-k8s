@@ -68,7 +68,7 @@ if __name__ == "__main__":
     .write
     .mode('overwrite')
     .format('parquet')
-    .save('gs://dl-techinical-apps/samples/titanic/processing/titanic.csv')
+    .save('gs://dl-techinical-apps/samples/titanic/processing/titanic')
     )
 
     print('*****************')

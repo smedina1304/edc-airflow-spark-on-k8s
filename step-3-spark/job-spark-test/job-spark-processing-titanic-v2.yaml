@@ -31,7 +31,7 @@ spec:
     type: Never
   driver:    
     cores: 1
-    coreLimit: "1200m"
+    coreLimit: "2000m"
     memory: "2g"
     labels:
       version: 3.1.1
@@ -45,9 +45,9 @@ spec:
       - name: GOOGLE_APPLICATION_CREDENTIALS
         value: /var/secrets/google/key.json   
   executor:
-    cores: 2
+    cores: 1
     instances: 2
-    memory: "2g"
+    memory: "4g"
     labels:
       version: 3.1.1
     volumeMounts:
