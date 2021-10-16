@@ -640,7 +640,7 @@ https://googlecloudplatform.github.io/spark-on-k8s-operator
     spark-spark-operator-59c685545-84nq9    1/1     Running   0          23m
     ```
 
-    :point_right: *Atenção: No caso assim temos uma exemplo de erro que pode ser verificado via a `log`, e consultar o log deve ser utilizado o comando abaixo.*
+    :point_right: *Atenção: No caso assima temos uma exemplo de erro que pode ser verificado via a `log`, e consultar o log deve ser utilizado o comando abaixo.*
 
     ```shell
     kubectl logs job-pyspark-processing-titanic-driver -n sparkoperator
