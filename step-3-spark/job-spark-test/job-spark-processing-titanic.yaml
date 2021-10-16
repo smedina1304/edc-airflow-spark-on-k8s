@@ -7,8 +7,11 @@ spec:
   volumes:
     - name: ivy
       emptyDir: {}
+    - name: gcp-credentials
+      secret:
+        secretName: gcp-credentials-key
   sparkConf:
-    spark.jars.packages: "com.google.cloud.bigdataoss:gcs-connector:hadoop2-2.2.1"
+#    spark.jars.packages: "com.google.cloud.bigdataoss:gcs-connector:hadoop2-2.0.1"
     spark.driver.extraJavaOptions: "-Divy.cache.dir=/tmp -Divy.home=/tmp"
     spark.kubernetes.allocation.batch.size: "10"
   hadoopConf:
@@ -16,40 +19,42 @@ spec:
     "fs.gs.system.bucket": "dl-techinical-apps"
     "google.cloud.auth.service.account.enable": "true" 
     "fs.gs.impl": "com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem"
-    "fs.AbstractFileSystem.gs.impl": "com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem"
+    "fs.AbstractFileSystem.gs.impl": "com.google.cloud.hadoop.fs.gcs.GoogleHadoopFS"
   type: Python
   pythonVersion: "3"
   mode: cluster
-  image: "docker.io/smedina1304/spark-operator:3.0.0-gcp"
+  image: "docker.io/smedina1304/spark-operator:3.1.1-gcp"
   imagePullPolicy: Always
-  mainApplicationFile: gs://dl-techinical-apps/job-spark/test/job-spark-processing-titanic.py
-  sparkVersion: "3.0.0"
+  mainApplicationFile: https://raw.githubusercontent.com/smedina1304/edc-airflow-spark-on-k8s/main/step-3-spark/job-spark-test/job-spark-processing-titanic.py
+  sparkVersion: "3.1.1"
   restartPolicy:
     type: Never
-  driver:
-    envSecretKeyRefs:
-      GCP_SERVICE_ACCOUNT_JSON:
-        name: gcp-credentials
-        key: gcp_sa_json
+  driver:    
     cores: 1
-    coreLimit: "1200m"
-    memory: "4g"
+    coreLimit: "2000m"
+    memory: "2g"
     labels:
-      version: 3.0.0
-    serviceAccount: spark
-    volumeMounts:
-      - name: ivy
-        mountPath: /tmp    
-  executor:
-    envSecretKeyRefs:
-      GCP_SERVICE_ACCOUNT_JSON:
-        name: gcp-credentials
-        key: gcp_sa_json
-    cores: 3
-    instances: 3
-    memory: "4g"
-    labels:
-      version: 3.0.0
+      version: 3.1.1
+    serviceAccount: spark 
     volumeMounts:
       - name: ivy
         mountPath: /tmp
+      - name: gcp-credentials
+        mountPath: /var/secrets/google
+    env:
+      - name: GOOGLE_APPLICATION_CREDENTIALS
+        value: /var/secrets/google/key.json   
+  executor:
+    cores: 1
+    instances: 2
+    memory: "4g"
+    labels:
+      version: 3.1.1
+    volumeMounts:
+      - name: ivy
+        mountPath: /tmp
+      - name: gcp-credentials
+        mountPath: /var/secrets/google
+    env:
+      - name: GOOGLE_APPLICATION_CREDENTIALS
+        value: /var/secrets/google/key.json
