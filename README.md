@@ -661,11 +661,26 @@ https://googlecloudplatform.github.io/spark-on-k8s-operator
     
     *Output: [simulação de sucesso]*
     ```console
-    NAME                                    READY   STATUS    RESTARTS   AGE
-    job-pyspark-processing-titanic-driver   0/1     Error     0          83s
-    spark-spark-operator-59c685545-84nq9    1/1     Running   0          23m
+    NAME                                                     READY   STATUS    RESTARTS   AGE
+    job-pyspark-processing-titanic-6c16db7c8a756eca-exec-1   1/1     Running   0          24s
+    job-pyspark-processing-titanic-driver                    1/1     Running   0          31s
+    spark-spark-operator-59c685545-84nq9                     1/1     Running   0          53m
     ```
 
+    :point_right: *Observação: Veja que foi criado um `POD` **driver** e outro **exec-1** conforme a definição do arquivo `yaml`.*
+
+    Com a finalização do processo será visualizado da seguinte forma.
+    *Output:*
+    ```console
+    NAME                                    READY   STATUS      RESTARTS   AGE
+    job-pyspark-processing-titanic-driver   0/1     Completed   0          3m3s
+    spark-spark-operator-59c685545-84nq9    1/1     Running     0          56m
+    ```
+
+    :point_right: *Observação: Veja que o `POD` **driver** ' mantido para histórico e verificação da conclusão do processo, porem o `POD` **exec-1** com a sua finalização o mesmo é removido da lista de `PODs` automaticamente.
+
+    <br>
+    Neste ponto e com a finalização do Job de teste com sucesso podemos concluir que o ambiente está *OK* para seguirmos para próximas etapas.
 
     <br>
 ## Preparação e Deploy do Airflow no k8s:
