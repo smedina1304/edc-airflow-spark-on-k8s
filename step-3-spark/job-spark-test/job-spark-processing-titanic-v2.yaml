@@ -9,7 +9,7 @@ spec:
       emptyDir: {}
     - name: gcp-credentials
       secret:
-        secretName: gcp-credentials-key
+        secretName: gcp-credentials-key       
   sparkConf:
 #    spark.jars.packages: "com.google.cloud.bigdataoss:gcs-connector:hadoop2-2.0.1"
     spark.driver.extraJavaOptions: "-Divy.cache.dir=/tmp -Divy.home=/tmp"
@@ -32,7 +32,7 @@ spec:
   driver:    
     cores: 1
     coreLimit: "2000m"
-    memory: "2g"
+    memory: "1g"
     labels:
       version: 3.1.1
     serviceAccount: spark 
@@ -43,11 +43,11 @@ spec:
         mountPath: /var/secrets/google
     env:
       - name: GOOGLE_APPLICATION_CREDENTIALS
-        value: /var/secrets/google/key.json   
+        value: /var/secrets/google/key.json
   executor:
     cores: 1
-    instances: 2
-    memory: "4g"
+    instances: 1
+    memory: "1g"
     labels:
       version: 3.1.1
     volumeMounts:

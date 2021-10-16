@@ -742,7 +742,7 @@ https://googlecloudplatform.github.io/spark-on-k8s-operator
     <br>
     Na pasta `step-3-spark` existem dois arquivos *Dockerfile*, um que copia arquivos *jars* compativeis com a versão do spark e recursos dos provedores com a GCP e AWS.
     <br>
-    Basicamente para geral o build das imagens foi utilizado os comandos abaixo:
+    Basicamente para gerar o build das imagens foi utilizado os comandos abaixo:
     <br>
 
     GCP - Spark 3.1.1
