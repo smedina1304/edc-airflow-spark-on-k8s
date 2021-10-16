@@ -1,11 +1,21 @@
 # edc-airflow-spark-on-k8s
 Engenharia de Dados em Cloud - ETL - Airflow e Spark Operator no Kubernetes - Google Kubernetes Engine
 ## Objetivo:
-Este projeto tem como objetivo documentar de forma didática as etapas necessárias para criar de um Cluster Kubernetes ("**k8s**") e realizar o *deploy* do *Airflow* e *Spark-Operator* neste mesmo cluster. Disponibilizando assim uma ambiente escalavel para processamento de dados e orquestração de pipelines, sendo plenamente aplicavél em um contexto de *Big Data*. 
+Este projeto tem como objetivo documentar de forma didática as etapas necessárias para criar de um Cluster Kubernetes ("**k8s**") e realizar o *deploy* do *Airflow* e *Spark-Operator* neste mesmo cluster. Disponibilizando assim um ambiente escalavel para processamento de dados e orquestração de pipelines, sendo plenamente aplicavél em um contexto de *Big Data*. 
+<br>
+Este tutorial foi gerado com base no ambiente do GCP, porem nos links abaixo existem várias referências de uso na AWS. Alguns pontos deste projeto também será referenciado o ações para o ambiente AWS.
 
 <br>
 
 Links de referência deste projeto:
+
+- "GoogleCloudPlatform/spark-on-k8s-operator"
+    - https://github.com/GoogleCloudPlatform/spark-on-k8s-operator
+        <br>
+        *Officially supported Google product:*<br>
+        ![GitHub forks](https://img.shields.io/github/forks/GoogleCloudPlatform/spark-on-k8s-operator?style=social)        
+        <br>
+
 - "edc-igti-terraform-ias-mod1"
     - https://github.com/smedina1304/edc-igti-terraform-ias-mod1
         <br>
@@ -449,6 +459,150 @@ A utilização de ferramentas via CLI (*"command line"*) é importante pois pode
     <br>
     <br>
 
+## Preparação e Deploy do Spark Operator no k8s:
+
+Para executar jobs spark no k8s estaremos utilizando uma imagem do Spark (base gcr.io/spark-operator/spark-py:v3.0.0), e para definir os cada job spark com recursos `sparkapplication` no k8s iremos utilizar uma imagem `Helm` que pode ser localizada no link abaixo:
+<br>
+Helm Chart for Spark Operator:
+https://googlecloudplatform.github.io/spark-on-k8s-operator
+<br>
+
+1. Criação do namespace `sparkoperator`,caso não exista em seu cluster k8s.
+    <br>
+    Para verificar os namespaces existentes utilize o comando abaixo e verifique na lista retornada:
+
+    ```shell
+    kubectl get namespaces
+    ```
+    
+    <br>
+
+    Para criar o namespace *`sparkoperator`*:
+
+    ```shell
+    kubectl create namespace sparkoperator
+    ```
+    <br>
+
+2. Atualização a imagem chart do *`spark-operator`* no repositório *`helm repo`* local antes do deploy no k8s.
+    <br>
+    Para incluir a imagem chart do `spark-operator` localmente, execute este comando:
+
+    ```shell
+    helm repo add spark-operator https://googlecloudplatform.github.io/spark-on-k8s-operator
+    ```
+
+    <br>
+    Se já houver a imagem do chart do `spark-operator` baixada anteriormente, execute a atualização do repositório para garantir que está com a versão mais atualizada.
+    
+    ```shell
+    helm repo update
+    ```
+
+    <br>
+
+3. Criação Service Account `spark` no `k8s` como requisito de deploy `spark-operator`.
+    <br>
+    Para gerar o Service Account executar o comando abaixo:
+    
+    ```shell
+    kubectl create serviceaccount spark -n sparkoperator
+    ```
+    <br>
+
+4. Criação Role Binding `spark` no `k8s` como requisito de deploy `spark-operator`.
+    <br>
+    Para gerar o Service Account executar o comando abaixo:
+    
+    ```shell
+    kubectl create clusterrolebinding spark-role-binding --clusterrole=edit --serviceaccount=sparkoperator:spark -n sparkoperator
+    ```
+    <br>
+
+5. Delpoy do Spark Operator no Cluster k8s.
+
+    Após as preparações anteriores finalizadas executar o seguinte comando:
+
+    ```shell
+    helm install spark spark-operator/spark-operator -n sparkoperator --debug
+    ```
+    <br>
+
+    :point_right: *Atenção: Sendo necessário desistalar o airflow por qualquer motivos, utilize o comando abaixo ou busque uma referência do mesmo para atendimento da necessidade:*
+
+    ```shell
+    helm uninstall spark -n sparkoperator --debug
+    ```
+
+    Após uma soliciatação de desinstalação sempre verifique se os recursos foram liberados.
+    <br>
+    <br>
+
+6. Preparação da imagem Docker para executar os jobs spark como recurso do tipo `sparkapplication`.
+    <br>
+    Na pasta `step-2-spark` existem dois arquivos *Dockerfile*, um que copia arquivos *jars* compativeis com a versão do spark e recursos dos provedores com a GCP e AWS.
+    <br>
+    Basicamente para gerar o build das imagens foi utilizado os comandos abaixo:
+    <br>
+
+    GCP - Spark 3.1.1
+
+    ```shell
+    docker build -t smedina1304/spark-operator:3.1.1-gcp -f Dockerfile_gcp .
+    ```
+
+    AWS - Spark 3.0.0
+    
+    ```shell
+    docker build -t smedina1304/spark-operator:3.0.0-aws -f Dockerfile_aws .
+    ```
+
+
+    Ambas as imagems estão disponiveis no Docker Hub:
+    https://hub.docker.com/r/smedina1304/spark-operator
+
+    <br>
+
+    Caso tenha a preferência de buscar mais detalhes para gerar uma image spark paro o k8s, utilize o link como referência: https://github.com/GoogleCloudPlatform/spark-on-k8s-operator/blob/master/docs/user-guide.md#writing-a-sparkapplication-spec
+
+    <br>
+
+6. Criando uma `Secret` com as credenciais para acesso aos buckets do Data Lake.
+
+    GCP - Credenciais de acesso via Arquivo JSON:
+    <br>
+
+    Carregando o conteúdo o arquivo com as chaves de acesso na `Secret`:
+    
+    ```shell
+    kubectl create secret generic gcp-credentials-key --from-file=key.json=/path-file-service-account-gcp.json -n sparkoperator
+    ```
+    <br>
+
+    Para verificar se a `Secret` foi criada corretamente, utilize o comando abaixo:
+    <br>
+
+    ```shell
+    kubectl describe secret gcp-credentials -n sparkoperator
+    ```
+
+    *Output:*<br>
+    *Observe que o conteúdo não será exposto*.
+    ```console
+    Name:         gcp-credentials-key
+    Namespace:    sparkoperator
+    Labels:       <none>
+    Annotations:  <none>
+
+    Type:  Opaque
+
+    Data
+    ====
+    key.json:  2323 bytes        
+    ```
+
+    <br>
+    <br>
 ## Preparação e Deploy do Airflow no k8s:
 
 Para a orquestração dos pipelines de processamento de dados estaremos utilizando o Apache Airflow, e para fazer o deploy no cluster k8s iremos utilizar uma imagem `Helm` que pode ser localizada no link abaixo:
@@ -507,7 +661,7 @@ Verifique as instruções e siga as etapas de instalação:
     Para gerar o arquivo `values` para o deploy, executar o comando abaixo:
     
     ```shell
-    helm show values apache-airflow/airflow > step-2-airflow/my-airflow-values.yaml
+    helm show values apache-airflow/airflow > step-3-airflow/my-airflow-values.yaml
     ```
 
     Onde:
@@ -518,7 +672,7 @@ Verifique as instruções e siga as etapas de instalação:
     <br>
 
     Output: (operador `>`)
-    - `step-2-airflow` - pasta do projeto para armazenar as instruções ou configurações de deploy para k8s via helm.
+    - `step-3-airflow` - pasta do projeto para armazenar as instruções ou configurações de deploy para k8s via helm.
     - `my-airflow-values.yaml` - nome do arquivo que irá armazenar as alterações das configurações originais.
 
     <br>
@@ -635,7 +789,7 @@ Verifique as instruções e siga as etapas de instalação:
     Após as preparações anteriores finalizadas executar o seguinte comando:
 
     ```shell
-    helm install airflow apache-airflow/airflow -f step-2-airflow/my-airflow-values.yaml -n airflow --debug
+    helm install airflow apache-airflow/airflow -f step-3-airflow/my-airflow-values.yaml -n airflow --debug
     ```
     <br>
 
@@ -659,147 +813,5 @@ Verifique as instruções e siga as etapas de instalação:
 
     <br>
     <br>
-## Preparação e Deploy do Spark Operator no k8s:
 
-Para executar jobs spark no k8s estaremos utilizando uma imagem do Spark (base gcr.io/spark-operator/spark-py:v3.0.0), e para definir os cada job spark com recursos `sparkapplication` no k8s iremos utilizar uma imagem `Helm` que pode ser localizada no link abaixo:
-<br>
-Helm Chart for Spark Operator:
-https://googlecloudplatform.github.io/spark-on-k8s-operator
-<br>
-
-1. Criação do namespace `processing`,caso não exista em seu cluster k8s.
-    <br>
-    Para verificar os namespaces existentes utilize o comando abaixo e verifique na lista retornada:
-
-    ```shell
-    kubectl get namespaces
-    ```
-    
-    <br>
-
-    Para criar o namespace *`processing`*:
-
-    ```shell
-    kubectl create namespace processing
-    ```
-    <br>
-
-2. Atualização a imagem chart do *`spark-operator`* no repositório *`helm repo`* local antes do deploy no k8s.
-    <br>
-    Para incluir a imagem chart do `spark-operator` localmente, execute este comando:
-
-    ```shell
-    helm repo add spark-operator https://googlecloudplatform.github.io/spark-on-k8s-operator
-    ```
-
-    <br>
-    Se já houver a imagem do chart do `spark-operator` baixada anteriormente, execute a atualização do repositório para garantir que está com a versão mais atualizada.
-    
-    ```shell
-    helm repo update
-    ```
-
-    <br>
-
-3. Criação Service Account `spark` no `k8s` como requisito de deploy `spark-operator`.
-    <br>
-    Para gerar o Service Account executar o comando abaixo:
-    
-    ```shell
-    kubectl create serviceaccount spark -n processing
-    ```
-    <br>
-
-4. Criação Role Binding `spark` no `k8s` como requisito de deploy `spark-operator`.
-    <br>
-    Para gerar o Service Account executar o comando abaixo:
-    
-    ```shell
-    kubectl create clusterrolebinding spark-role-binding --clusterrole=edit --serviceaccount=processing:spark -n processing
-    ```
-    <br>
-
-5. Delpoy do Spark Operator no Cluster k8s.
-
-    Após as preparações anteriores finalizadas executar o seguinte comando:
-
-    ```shell
-    helm install spark spark-operator/spark-operator -n processing --debug
-    ```
-    <br>
-
-    :point_right: *Atenção: Sendo necessário desistalar o airflow por qualquer motivos, utilize o comando abaixo ou busque uma referência do mesmo para atendimento da necessidade:*
-
-    ```shell
-    helm uninstall spark -n processing --debug
-    ```
-
-    Após uma soliciatação de desinstalação sempre verifique se os recursos foram liberados.
-    <br>
-    <br>
-
-6. Preparação da imagem Docker para executar os jobs spark como recurso do tipo `sparkapplication`.
-    <br>
-    Na pasta `step-3-spark` existem dois arquivos *Dockerfile*, um que copia arquivos *jars* compativeis com a versão do spark e recursos dos provedores com a GCP e AWS.
-    <br>
-    Basicamente para gerar o build das imagens foi utilizado os comandos abaixo:
-    <br>
-
-    GCP - Spark 3.1.1
-
-    ```shell
-    docker build -t smedina1304/spark-operator:3.1.1-gcp -f Dockerfile_gcp .
-    ```
-
-    AWS - Spark 3.0.0
-    
-    ```shell
-    docker build -t smedina1304/spark-operator:3.0.0-aws -f Dockerfile_aws .
-    ```
-
-
-    Ambas as imagems estão disponiveis no Docker Hub:
-    https://hub.docker.com/r/smedina1304/spark-operator
-
-    <br>
-
-    Caso tenha a preferência de buscar mais detalhes para gerar uma image spark paro o k8s, utilize o link como referência: https://github.com/GoogleCloudPlatform/spark-on-k8s-operator/blob/master/docs/user-guide.md#writing-a-sparkapplication-spec
-
-    <br>
-
-6. Criando uma `Secret` com as credenciais para acesso aos buckets do Data Lake.
-
-    GCP - Credenciais de acesso via Arquivo JSON:
-    <br>
-
-    Carregando o conteúdo o arquivo com as chaves de acesso na `Secret`:
-    
-    ```shell
-    kubectl create secret generic gcp-credentials-key --from-file=key.json=/path-file-service-account-gcp.json -n processing
-    ```
-    <br>
-
-    Para verificar se a `Secret` foi criada corretamente, utilize o comando abaixo:
-    <br>
-
-    ```shell
-    kubectl describe secret gcp-credentials -n processing
-    ```
-
-    *Output:*<br>
-    *Observe que o conteúdo não será exposto*.
-    ```console
-    Name:         gcp-credentials-key
-    Namespace:    processing
-    Labels:       <none>
-    Annotations:  <none>
-
-    Type:  Opaque
-
-    Data
-    ====
-    key.json:  2323 bytes        
-    ```
-
-    <br>
     
