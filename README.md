@@ -44,8 +44,12 @@ Links de referência deste projeto:
 - Versão da Linguagem Python 3.8 ou superior deve estar instalada.
     
     ```shell
-    > python --version
-        Python 3.8.2
+    python --version
+    ```
+
+    *Output:*
+    ```console
+    Python 3.8.2
     ```
     <br>
 
@@ -55,7 +59,7 @@ Links de referência deste projeto:
 - Clonar o repositório deste projeto na sua máquina de desenvolvimento, para esta ação via linha de comando selecione a pasta que recebera o projeto e execute o comando `git`, caso prefeira outro procedimento esta ação é livre:
 
     ```shell
-    > git clone https://github.com/smedina1304/edc-airflow-spark-on-k8s.git
+    git clone https://github.com/smedina1304/edc-airflow-spark-on-k8s.git
     ```
     <br>
 
@@ -65,7 +69,7 @@ Links de referência deste projeto:
 - Criando o ambiente virtual Python **`venv`**, para isolar e controlar o versionamento de pacotes a ser utilizado. A criação do ambiente virtual deve ser realizado na pasta *root* do projeto.
 
     ```shell
-    > python -m venv venv
+    python -m venv venv
     ```
     <br>
 
@@ -73,7 +77,7 @@ Links de referência deste projeto:
 
     - Linux e Mac:
     ```shell
-    > source ./venv/bin/activate
+    source ./venv/bin/activate
     ```    
     <br>
 
@@ -83,14 +87,14 @@ Links de referência deste projeto:
         - No Windows via Powershell utilizar "`activate.bat`".
 
         ```shell
-        > .\venv\Scripts\Activate.ps1
+        .\venv\Scripts\Activate.ps1
         ```
         <br>
 
         - No Windows via CMD utilizar "`activate.bat`".
 
         ```shell
-        > .\venv\Scripts\activate.bat
+        .\venv\Scripts\activate.bat
         ```
     <br>
         
@@ -107,7 +111,7 @@ Links de referência deste projeto:
 - Para desativar o ambiente **`venv`**:
 
     ```shell
-    > deactivate
+    deactivate
     ```
     <br>
 
@@ -120,14 +124,14 @@ Links de referência deste projeto:
     Passo opcional para atualização do `pip` no ambiente **`venv`**:
 
     ```shell
-    > pip install --upgrade pip
+    pip install --upgrade pip
     ```
     <br>
 
     Passo de instalação dos pacotes via arquivo *`requirements.txt`*:
 
     ```shell
-    > pip install -r requirements.txt
+    pip install -r requirements.txt
     ```
     <br>
 
@@ -139,20 +143,20 @@ Links de referência deste projeto:
     Definir a variável de ambiente para Mac ou Linux:
 
     ```shell
-        > export ARCHFLAGS="-arch x86_64"
+    export ARCHFLAGS="-arch x86_64"
     ```
 
     Para fazer a instalação do airflow de forma isolada execute o comando:
 
     ```shell
-        > pip install apache-airflow
+    pip install apache-airflow
     ```
 
     ou pela documentação do pip (https://pypi.org/project/apache-airflow/).
 
     ```shell
-        > pip install apache-airflow==2.1.4 \
-        --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.1.4/constraints-3.7.txt"
+    pip install apache-airflow==2.1.4 \
+    --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.1.4/constraints-3.7.txt"
     ```
     <br>
 
@@ -185,27 +189,66 @@ A utilização de ferramentas via CLI (*"command line"*) é importante pois pode
    - kubectx - para alterar o contexto o cluster k8s, em caso de haver mais de uma referência na máquina utilizada para operação - https://github.com/ahmetb/kubectx
     <br>
 
-- Verificar as instalações:
+- Verificar as instalações AWS CLI:
 
-   ``` shell
-    > aws --version
+    ``` shell
+    aws --version
+    ```
+
+    *Output:*
+    ```console
     aws-cli/2.2.31 Python/3.8.8 Darwin/19.6.0 exe/x86_64 prompt/off
+    ```
+    <br>
 
-    > gcloud --version
+- Verificar as instalações GCP CLI:
+
+    ```shell
+    gcloud --version
+    ```
+
+    *Output:*
+    ```console
     Google Cloud SDK 358.0.0
     bq 2.0.71
     core 2021.09.17
     gsutil 4.68
+    ```
+    <br>
 
-    > eksctl version
+- Verificar as instalações EKSCTL:
+
+    ```shell
+    eksctl version
+    ```
+
+    *Output:*
+    ```console
     0.63.0
+    ```
+    <br>
 
-    > kubectl version
+- Verificar as instalações EKSCTL:
+
+    ```shell
+    kubectl version
+    ```
+
+    *Output:*
+    ```console    
     Client Version: version.Info{Major:"1", Minor:"22", GitVersion:"v1.22.1", GitCommit:"632ed300f2c34f6d6d15ca4cef3d3c7073412212", GitTreeState:"clean", BuildDate:"2021-08-19T15:38:26Z", GoVersion:"go1.16.6", Compiler:"gc", Platform:"darwin/amd64"}
+    ```
+    <br>
 
-    > helm version
+- Verificar as instalações HELM:
+
+    ```shell
+    helm version
+    ```
+
+    *Output:*
+    ```console    
     version.BuildInfo{Version:"v3.6.3", GitCommit:"d506314abfb5d21419df8c7e7e68012379db2354", GitTreeState:"dirty", GoVersion:"go1.16.6"}
-
    ```
 
 <br>
@@ -222,7 +265,11 @@ A utilização de ferramentas via CLI (*"command line"*) é importante pois pode
     - Após instalação do `gcloud`, conforme instruções e o instalador que foi baixado verifique as informações de configuração antes de iniciar a criação do cluster:
 
         ```shell
-        > gcloud config list             
+        gcloud config list             
+        ```
+
+        *Output:*
+        ```console
         [compute]
         region = us-east1
         zone = us-east1-c
@@ -240,7 +287,7 @@ A utilização de ferramentas via CLI (*"command line"*) é importante pois pode
 
         ```shell
 
-        > gcloud /
+        gcloud /
         beta container --project "edc-igti-smedina" /
         clusters create "cluster-smedina-k8s" --zone "us-east1-c" /
         --no-enable-basic-auth --cluster-version "1.20.9-gke.1001" /
@@ -349,22 +396,30 @@ A utilização de ferramentas via CLI (*"command line"*) é importante pois pode
     Verificando o contexto de acesso.
 
     ```shell
-        > kubectx
-        gke_edc-igti-smedina_us-east1-c_cluster-smedina-k8s
+    kubectx
+    ```
+
+    *Output:*
+    ```console
+    gke_edc-igti-smedina_us-east1-c_cluster-smedina-k8s
     ```
 
     <br>
     Listando nos Nodes dos Cluster.
 
     ```shell
-        > kubectl get nodes
-        NAME                                                 STATUS   ROLES    AGE    VERSION
-        gke-cluster-smedina-k8s-default-pool-0bde709b-0vq6   Ready    <none>   5m8s   v1.20.9-gke.1001
-        gke-cluster-smedina-k8s-default-pool-0bde709b-2fb6   Ready    <none>   5m8s   v1.20.9-gke.1001
-        gke-cluster-smedina-k8s-default-pool-0bde709b-dzt2   Ready    <none>   5m9s   v1.20.9-gke.1001
-        gke-cluster-smedina-k8s-default-pool-0bde709b-ksgh   Ready    <none>   5m9s   v1.20.9-gke.1001
-        gke-cluster-smedina-k8s-default-pool-0bde709b-vfvh   Ready    <none>   5m8s   v1.20.9-gke.1001
-        gke-cluster-smedina-k8s-default-pool-0bde709b-vtvk   Ready    <none>   5m9s   v1.20.9-gke.1001
+    kubectl get nodes
+    ```
+
+    *Output:*
+    ```console
+    NAME                                                 STATUS   ROLES    AGE    VERSION
+    gke-cluster-smedina-k8s-default-pool-0bde709b-0vq6   Ready    <none>   5m8s   v1.20.9-gke.1001
+    gke-cluster-smedina-k8s-default-pool-0bde709b-2fb6   Ready    <none>   5m8s   v1.20.9-gke.1001
+    gke-cluster-smedina-k8s-default-pool-0bde709b-dzt2   Ready    <none>   5m9s   v1.20.9-gke.1001
+    gke-cluster-smedina-k8s-default-pool-0bde709b-ksgh   Ready    <none>   5m9s   v1.20.9-gke.1001
+    gke-cluster-smedina-k8s-default-pool-0bde709b-vfvh   Ready    <none>   5m8s   v1.20.9-gke.1001
+    gke-cluster-smedina-k8s-default-pool-0bde709b-vtvk   Ready    <none>   5m9s   v1.20.9-gke.1001
     ```
 
     <br>
@@ -376,14 +431,18 @@ A utilização de ferramentas via CLI (*"command line"*) é importante pois pode
     <br>
 
     ```shell
-        > gcloud container clusters delete "cluster-smedina-k8s"
-        gcloud container clusters delete "cluster-smedina-k8s"
-        The following clusters will be deleted.
-        - [cluster-smedina-k8s] in [us-east1-c]
+    gcloud container clusters delete "cluster-smedina-k8s"
+    ```
 
-        Do you want to continue (Y/n)?  Y
+    *Output:*
+    ```console
+    gcloud container clusters delete "cluster-smedina-k8s"
+    The following clusters will be deleted.
+    - [cluster-smedina-k8s] in [us-east1-c]
 
-        Deleting cluster cluster-smedina-k8s...done. 
+    Do you want to continue (Y/n)?  Y
+
+    Deleting cluster cluster-smedina-k8s...done. 
     ```
     :point_right: *Importante: Confirme a DELEÇÃO com [Enter] ou [Y].*
 
@@ -406,7 +465,7 @@ Verifique as instruções e siga as etapas de instalação:
     Para verificar os namespaces existentes utilize o comando abaixo e verifique na lista retornada:
 
     ```shell
-        > kubectl get namespaces
+    kubectl get namespaces
     ```
     
     <br>
@@ -414,7 +473,7 @@ Verifique as instruções e siga as etapas de instalação:
     Para criar o namespace *`airflow`*:
 
     ```shell
-        > kubectl create namespace airflow
+    kubectl create namespace airflow
     ```
 
     <br>
@@ -422,7 +481,7 @@ Verifique as instruções e siga as etapas de instalação:
     Apenas como verificação você pode utilizar o comando para listar todos os namespaces e verificar se o *`airflow`* foi criado devidamente, e/ou também pode utilizar o comando abaixo para verificar todos os recursos disponíveis em um namespace, no caso *`airflow`* quando acabar de ser criado não deve apresentar nenhum item.
 
     ```shell
-        > kubectl get all -n airflow
+    kubectl get all -n airflow
     ```
     <br>
 
@@ -431,14 +490,14 @@ Verifique as instruções e siga as etapas de instalação:
     Para incluir a imagem chart do `airflow` localmente, execute este comando:
 
     ```shell
-        > helm repo add apache-airflow https://airflow.apache.org
+    helm repo add apache-airflow https://airflow.apache.org
     ```
 
     <br>
     Se já houver a imagem do chart do `airflow` baixada anteriormente, execute a atualização do repositório para garantir que está com a versão mais atualizada.
     
     ```shell
-        > helm repo update
+    helm repo update
     ```
 
     <br>
@@ -448,7 +507,7 @@ Verifique as instruções e siga as etapas de instalação:
     Para gerar o arquivo `values` para o deploy, executar o comando abaixo:
     
     ```shell
-        > helm show values apache-airflow/airflow > step-2-airflow/my-airflow-values.yaml
+    helm show values apache-airflow/airflow > step-2-airflow/my-airflow-values.yaml
     ```
 
     Onde:
@@ -576,14 +635,14 @@ Verifique as instruções e siga as etapas de instalação:
     Após as preparações anteriores finalizadas executar o seguinte comando:
 
     ```shell
-        > helm install airflow apache-airflow/airflow -f step-2-airflow/my-airflow-values.yaml -n airflow --debug
+    helm install airflow apache-airflow/airflow -f step-2-airflow/my-airflow-values.yaml -n airflow --debug
     ```
     <br>
 
     :point_right: *Atenção: Sendo necessário desistalar o airflow por qualquer motivos, utilize o comando abaixo ou busque uma referência do mesmo para atendimento da necessidade:*
 
     ```shell
-        > helm uninstall airflow -n airflow --debug
+    helm uninstall airflow -n airflow --debug
     ```
 
     Após uma soliciatação de desinstalação sempre verifique se os recursos foram liberados.
@@ -595,7 +654,7 @@ Verifique as instruções e siga as etapas de instalação:
     Caso não tenha sido definido a `Fernet Key value` no arquivo `yaml`, como no caso deste tutorial, a mesma é gerada automaticamente e sendo necessário a sua utilização, é possível buscar o valor desta chave utilizando o comando abaixo:
 
     ```shell
-        > kubectl get secret --namespace airflow airflow-fernet-key -o jsonpath="{.data.fernet-key}" | base64 --decode
+    kubectl get secret --namespace airflow airflow-fernet-key -o jsonpath="{.data.fernet-key}" | base64 --decode
     ``` 
 
     <br>
@@ -613,7 +672,7 @@ https://googlecloudplatform.github.io/spark-on-k8s-operator
     Para verificar os namespaces existentes utilize o comando abaixo e verifique na lista retornada:
 
     ```shell
-        > kubectl get namespaces
+    kubectl get namespaces
     ```
     
     <br>
@@ -621,7 +680,7 @@ https://googlecloudplatform.github.io/spark-on-k8s-operator
     Para criar o namespace *`processing`*:
 
     ```shell
-        > kubectl create namespace processing
+    kubectl create namespace processing
     ```
     <br>
 
@@ -630,14 +689,14 @@ https://googlecloudplatform.github.io/spark-on-k8s-operator
     Para incluir a imagem chart do `spark-operator` localmente, execute este comando:
 
     ```shell
-        > helm repo add spark-operator https://googlecloudplatform.github.io/spark-on-k8s-operator
+    helm repo add spark-operator https://googlecloudplatform.github.io/spark-on-k8s-operator
     ```
 
     <br>
     Se já houver a imagem do chart do `spark-operator` baixada anteriormente, execute a atualização do repositório para garantir que está com a versão mais atualizada.
     
     ```shell
-        > helm repo update
+    helm repo update
     ```
 
     <br>
@@ -647,7 +706,7 @@ https://googlecloudplatform.github.io/spark-on-k8s-operator
     Para gerar o Service Account executar o comando abaixo:
     
     ```shell
-        > kubectl create serviceaccount spark -n processing
+    kubectl create serviceaccount spark -n processing
     ```
     <br>
 
@@ -656,7 +715,7 @@ https://googlecloudplatform.github.io/spark-on-k8s-operator
     Para gerar o Service Account executar o comando abaixo:
     
     ```shell
-        > kubectl create clusterrolebinding spark-role-binding --clusterrole=edit --serviceaccount=processing:spark -n processing
+    kubectl create clusterrolebinding spark-role-binding --clusterrole=edit --serviceaccount=processing:spark -n processing
     ```
     <br>
 
@@ -665,14 +724,14 @@ https://googlecloudplatform.github.io/spark-on-k8s-operator
     Após as preparações anteriores finalizadas executar o seguinte comando:
 
     ```shell
-        > helm install spark spark-operator/spark-operator -n processing --debug
+    helm install spark spark-operator/spark-operator -n processing --debug
     ```
     <br>
 
     :point_right: *Atenção: Sendo necessário desistalar o airflow por qualquer motivos, utilize o comando abaixo ou busque uma referência do mesmo para atendimento da necessidade:*
 
     ```shell
-        > helm uninstall spark -n processing --debug
+    helm uninstall spark -n processing --debug
     ```
 
     Após uma soliciatação de desinstalação sempre verifique se os recursos foram liberados.
@@ -681,22 +740,23 @@ https://googlecloudplatform.github.io/spark-on-k8s-operator
 
 6. Preparação da imagem Docker para executar os jobs spark como recurso do tipo `sparkapplication`.
     <br>
-    Na pasta `step-3-spark` existem dois arquivos *Dockerfile*, um que copia arquivos *jars* compativeis com a versão do spark compativel com a AWS e outro com o GCP.
+    Na pasta `step-3-spark` existem dois arquivos *Dockerfile*, um que copia arquivos *jars* compativeis com a versão do spark e recursos dos provedores com a GCP e AWS.
     <br>
     Basicamente para geral o build das imagens foi utilizado os comandos abaixo:
     <br>
-    <br>
+
+    GCP - Spark 3.1.1
+
+    ```shell
+    docker build -t smedina1304/spark-operator:3.1.1-gcp -f Dockerfile_gcp .
+    ```
+
     AWS - Spark 3.0.0
     
     ```shell
-        > docker build -t smedina1304/spark-operator:3.0.0-aws -f Dockerfile_aws .
+    docker build -t smedina1304/spark-operator:3.0.0-aws -f Dockerfile_aws .
     ```
 
-    GCP - Spark 3.0.0
-
-    ```shell
-        > docker build -t smedina1304/spark-operator:3.0.0-gcp -f Dockerfile_gcp .
-    ```
 
     Ambas as imagems estão disponiveis no Docker Hub:
     https://hub.docker.com/r/smedina1304/spark-operator
@@ -712,31 +772,23 @@ https://googlecloudplatform.github.io/spark-on-k8s-operator
     GCP - Credenciais de acesso via Arquivo JSON:
     <br>
 
-    Carregando o conteúdo do arquivo em uma variável de ambiente:
+    Carregando o conteúdo o arquivo com as chaves de acesso na `Secret`:
     
     ```shell
-        > export my_gcp_credential=$(cat ./path-file-service-account-gcp.json)    
+    kubectl create secret generic gcp-credentials-key --from-file=key.json=/path-file-service-account-gcp.json -n processing
     ```
     <br>
 
-    Para verificar se o conteúdo foi carregado na variável de ambiente utilize o comando:
-
-    ```shell
-        > echo $my_gcp_credential    
-    ```    
+    Para verificar se a `Secret` foi criada corretamente, utilize o comando abaixo:
+    *Observe que o conteúdo não será exposto*.
     <br>
 
-    Criando uma `Secret` no k8s com as Credenciais GCP:
-
     ```shell
-        > kubectl create secret generic gcp-credentials --from-literal=gcp_sa_json=$my_gcp_credential -n processing
+    kubectl describe secret gcp-credentials -n processing
     ```
-    <br>
 
-    Para verificar se a `Secret` foi criada corretamento, claro que o conteúdo não será exposto, utilize o comando abaixo:
-
-    ```shell
-        > kubectl describe secret gcp-credentials -n processing
+    *Output:*
+    ```console
         Name:         gcp-credentials
         Namespace:    processing
         Labels:       <none>
@@ -749,10 +801,5 @@ https://googlecloudplatform.github.io/spark-on-k8s-operator
         gcp_sa_json:  2322 bytes        
     ```
 
-    Para remover a variável de ambiente utilizada para carregar o JSON utilize o comando baixo:
-
-    ```shell
-        > unset my_gcp_credential    
-    ``` 
     <br>
     
