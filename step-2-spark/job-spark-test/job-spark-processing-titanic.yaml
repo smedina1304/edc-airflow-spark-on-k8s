@@ -1,8 +1,8 @@
 apiVersion: "sparkoperator.k8s.io/v1beta2"
 kind: SparkApplication
 metadata:
-  name: job-pyspark-batch-202110062022
-  namespace: processing
+  name: job-pyspark-processing-titanic
+  namespace: sparkoperator
 spec:
   volumes:
     - name: ivy
@@ -25,14 +25,14 @@ spec:
   mode: cluster
   image: "docker.io/smedina1304/spark-operator:3.1.1-gcp"
   imagePullPolicy: Always
-  mainApplicationFile: https://raw.githubusercontent.com/smedina1304/edc-airflow-spark-on-k8s/main/step-3-spark/job-spark-test/job-spark-processing-titanic.py
+  mainApplicationFile: https://raw.githubusercontent.com/smedina1304/edc-airflow-spark-on-k8s/main/step-2-spark/job-spark-test/job-spark-processing-titanic.py
   sparkVersion: "3.1.1"
   restartPolicy:
     type: Never
   driver:    
     cores: 1
     coreLimit: "2000m"
-    memory: "2g"
+    memory: "1g"
     labels:
       version: 3.1.1
     serviceAccount: spark 
@@ -46,8 +46,8 @@ spec:
         value: /var/secrets/google/key.json   
   executor:
     cores: 1
-    instances: 2
-    memory: "4g"
+    instances: 1
+    memory: "2g"
     labels:
       version: 3.1.1
     volumeMounts:

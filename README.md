@@ -294,6 +294,10 @@ A utilização de ferramentas via CLI (*"command line"*) é importante pois pode
 
         *Sintaxe: `https://cloud.google.com/sdk/gcloud/reference/beta/container/clusters/create`*
         <br>
+        Para os testes deste projeto foi utilizado o parametro `--preemptible` para alocação de instâncias do Compute Engine que duram até 24 horas e não oferecem garantias de disponibilidade, mas são mais baratas.
+        <br>
+        Também foram utilizadas durante os testes dois tipos de maquinas `e2-standard-2` e `e2-standard-4`, é necessário avalidar durante o processo mediante ao volume de dados e capacidade de processamento a configuração mais adequada.
+        <br>
 
         ```shell
 
@@ -314,7 +318,7 @@ A utilização de ferramentas via CLI (*"command line"*) é importante pois pode
         "https://www.googleapis.com/auth/servicecontrol",/
         "https://www.googleapis.com/auth/service.management.readonly",/
         "https://www.googleapis.com/auth/trace.append" /
-        --max-pods-per-node "110" --num-nodes "4" /
+        --max-pods-per-node "110" --preemptible --num-nodes "4" /
         --logging=SYSTEM,WORKLOAD --monitoring=SYSTEM /
         --enable-ip-alias --network "projects/edc-igti-smedina/global/networks/default" /
         --subnetwork "projects/edc-igti-smedina/regions/us-east1/subnetworks/default" /
@@ -600,8 +604,69 @@ https://googlecloudplatform.github.io/spark-on-k8s-operator
     ====
     key.json:  2323 bytes        
     ```
+    <br>
+
+7. Executando uma Job com o recurso do Spark Operator no `k8s` para validação do ambiente.
+    <br>
+    Existe uma job-spark na pasta `./step-2-spark/job-spark-test`, então nesta pasta executar o comando abaixo para criar o `POD` para executar o processo.
+    <br>
+    ```shell
+    kubectl apply -f job-spark-processing-titanic.yaml -n sparkoperator
+    ```
+
+    *Output:*
+    ```console
+    sparkapplication.sparkoperator.k8s.io/job-pyspark-processing-titanic created
+    ```
+
+    Esta mensagem indica que o `POD` driver foi criado, e irá disparar os executores de processamento spark conforme a configuração do arquivo `yaml`. Para detalhamento dos parametros utilizados consultar no link da documentação:<br>
+    https://github.com/GoogleCloudPlatform/spark-on-k8s-operator/blob/master/docs/user-guide.md
+
 
     <br>
+
+    Para acompanhar o processoamento é necessário verificar os status dos `PODs`.
+
+    ```shell
+    kubectl get pods -n sparkoperator
+    ```
+
+    Após o comando `apply` e em caso de erro no processamento.
+
+    *Output: [simulação de erro]*
+    ```console
+    NAME                                    READY   STATUS    RESTARTS   AGE
+    job-pyspark-processing-titanic-driver   0/1     Error     0          83s
+    spark-spark-operator-59c685545-84nq9    1/1     Running   0          23m
+    ```
+
+    :point_right: *Atenção: No caso assim temos uma exemplo de erro que pode ser verificado via a `log`, e consultar o log deve ser utilizado o comando abaixo.*
+
+    ```shell
+    kubectl logs job-pyspark-processing-titanic-driver -n sparkoperator
+    ```
+
+    *O Erro deve ser verificado e direcionado para seguir com o teste e validação do ambiente.*
+
+    <br>
+
+    :point_right: *Atenção: Para executar novamente o `job-spark-processing-titanic` após o erro ou execução anterior é necessário excluir o `POD`, pois não é prossível reprocessar ou reexecutar `PODs` com o mesmo nome, mesmos que já finalizados.*
+
+    ```shell
+    kubectl delete sparkapplication/job-pyspark-processing-titanic -n sparkoperator
+    ```
+    <br>
+
+    Após o comando `apply` e em caso de sucesso no processamento.
+    
+    *Output: [simulação de sucesso]*
+    ```console
+    NAME                                    READY   STATUS    RESTARTS   AGE
+    job-pyspark-processing-titanic-driver   0/1     Error     0          83s
+    spark-spark-operator-59c685545-84nq9    1/1     Running   0          23m
+    ```
+
+
     <br>
 ## Preparação e Deploy do Airflow no k8s:
 
