@@ -789,16 +789,16 @@ https://googlecloudplatform.github.io/spark-on-k8s-operator
 
     *Output:*
     ```console
-        Name:         gcp-credentials
-        Namespace:    processing
-        Labels:       <none>
-        Annotations:  <none>
+    Name:         gcp-credentials-key
+    Namespace:    processing
+    Labels:       <none>
+    Annotations:  <none>
 
-        Type:  Opaque
+    Type:  Opaque
 
-        Data
-        ====
-        gcp_sa_json:  2322 bytes        
+    Data
+    ====
+    key.json:  2323 bytes        
     ```
 
     <br>
